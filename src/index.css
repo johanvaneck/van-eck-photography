@@ -1,0 +1,90 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 99%;
+    --foreground: 20 10% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 15%;
+
+    --primary: 43 74% 49%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 97%;
+    --secondary-foreground: 20 10% 15%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 43 74% 49%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 43 74% 49%;
+
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .image-card {
+    @apply relative overflow-hidden rounded-2xl;
+  }
+  
+  .image-card img {
+    @apply transition-all duration-500 ease-in-out;
+  }
+  
+  .image-card:hover img {
+    @apply scale-105;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl font-serif font-medium mb-6 relative inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    @apply absolute -bottom-2 left-0 w-1/2 h-1 bg-gold rounded-full;
+  }
+  
+  .nav-link {
+    @apply relative font-medium text-foreground hover:text-gold transition-colors duration-200;
+  }
+  
+  .nav-link::after {
+    content: '';
+    @apply absolute left-0 -bottom-2 w-0 h-0.5 bg-gold transition-all duration-300 ease-in-out;
+  }
+  
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+}
