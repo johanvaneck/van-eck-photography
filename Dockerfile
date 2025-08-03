@@ -1,5 +1,5 @@
-# Stage 1: Build the Next.js application
-FROM node:20-alpine AS builder
+# Use a single stage for building and running
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -18,20 +18,8 @@ COPY . .
 # Build the Next.js application
 RUN pnpm build
 
-# Stage 2: Create the production image
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
 # Set environment variables for Next.js production
 ENV NODE_ENV=production
-
-# Copy package.json for the start script
-COPY package.json ./
-
-# Copy the built application from the builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
 
 # Expose the port Next.js runs on
 EXPOSE 3000
