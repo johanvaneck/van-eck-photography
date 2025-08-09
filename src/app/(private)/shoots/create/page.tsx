@@ -10,7 +10,7 @@ import { routes } from "@/lib/routes"
 import { redirect } from "next/navigation"
 
 export default function Page() {
-  const handleSubmit = useCallback(async (formData: FormData) => {
+  const handleSubmit = async (formData: FormData) => {
     "use server";
     const nameInput = formData.get("name")
     if (!nameInput) {
@@ -30,7 +30,7 @@ export default function Page() {
       return
     }
     redirect(`${routes.shoots}/${id}`)
-  }, [])
+  }
   return (
     <Form className="flex flex-col gap-4 max-w-md" action={handleSubmit}>
       <Label>Name</Label>
