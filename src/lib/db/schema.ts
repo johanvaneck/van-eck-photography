@@ -93,7 +93,7 @@ export const shootsTable = pgTable("shoots", {
 
 export const photosTable = pgTable("photos", {
   ...tableDefaults,
-  bucketUrl: text("bucket_url").notNull(),
+  s3Path: text("s3_path").notNull(),
   featured: boolean("featured").default(false),
 
   shootId: text("shoot_id")
