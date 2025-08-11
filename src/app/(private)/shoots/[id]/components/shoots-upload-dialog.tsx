@@ -13,15 +13,20 @@ export function ShootsUploadDialog({
 }: {
 	shootId: string
 }) {
-	const createPhotoAction = async (): Promise<Result<Photo>> => {
+	const createPhotoAction = async ({
+		fileType,
+	}: {
+		fileType: string
+	}): Promise<Result<Photo>> => {
 		"use server";
 		const photoId = "photo_" + nanoid()
 		const { data, error } = await tryCatch(db
 			.insert(photosTable)
 			.values({
 				id: photoId,
-				s3Path: "",
 				shootId,
+				s3Path: "",
+				fileType,
 			})
 			.returning()
 		)
@@ -100,6 +105,11 @@ export function ShootsUploadDialog({
 	const submitPhotoChunksAction = async (photoId: string): Promise<Result<string>> => {
 		"use server";
 
+		const [photo] = await db
+			.select()
+			.from(photosTable)
+			.where(eq(photosTable.id, photoId))
+
 		const chunks = await db
 			.select()
 			.from(photoChunksTable)
@@ -136,6 +146,7 @@ export function ShootsUploadDialog({
 					Bucket: "van-eck-photography",
 					Key: s3Path,
 					Body: mergedChunks,
+					ContentType: photo.fileType,
 				})
 			))
 

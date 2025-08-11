@@ -1,5 +1,5 @@
 "use client";
-import { Photo, PhotoChunk } from "@/lib/db/types"
+import { Photo } from "@/lib/db/types"
 import {
 	Dialog,
 	DialogClose,
@@ -18,14 +18,14 @@ import Form from "next/form"
 import { Result } from "@/lib/types/result"
 import { useState } from "react"
 
-const CHUNK_SIZE = 500000 // Next.js limits the size of a request to 1MB
+const CHUNK_SIZE = 900000 // Next.js limits the size of a request to 1MB
 
 export function ShootsUploadDialogClient({
 	createPhotoAction,
 	uploadChunkAction,
 	submitPhotoChunksAction,
 }: {
-	createPhotoAction: () => Promise<Result<Photo>>,
+	createPhotoAction: (params: { fileType: string }) => Promise<Result<Photo>>,
 	uploadChunkAction: (formData: FormData) => Promise<Result<string>>
 	submitPhotoChunksAction: (photoId: string) => Promise<Result<string>>
 }) {
@@ -37,24 +37,28 @@ export function ShootsUploadDialogClient({
 	const handleSubmit = async (formData: FormData) => {
 		const photos = formData.getAll("photos")
 		setStatus("Assembling chunks...");
-		const blobs = photos.map((photo) => {
-			const blob = new Blob([photo])
-			const chunks = Array.from({ length: Math.ceil(blob.size / CHUNK_SIZE) }, (_, i) => {
-				const start = i * CHUNK_SIZE
-				const end = Math.min(blob.size, start + CHUNK_SIZE)
-				const chunk = blob.slice(start, end)
-				console.log(chunk.size)
-				return chunk
-			})
-			return chunks
+		const filesChunked = photos.map((file) => {
+			if (file instanceof File) {
+				const chunks = Array.from({ length: Math.ceil(file.size / CHUNK_SIZE) }, (_, i) => {
+					const start = i * CHUNK_SIZE
+					const end = Math.min(file.size, start + CHUNK_SIZE)
+					const chunk = file.slice(start, end)
+					console.log(chunk.size)
+					return chunk
+				})
+				return chunks
+			} else {
+				throw new Error("Invalid file type for photo")
+			}
 		})
-		console.log(blobs)
-		const countChunks = blobs.reduce((acc, chunks) => acc + chunks.length, 0)
+		console.log(filesChunked)
+		const countChunks = filesChunked.reduce((acc, chunks) => acc + chunks.length, 0)
 		setTotalChunks(countChunks)
+
 		setStatus(`Uploading ${countChunks} chunks...`);
 		await Promise.all(
-			blobs.map(async (chunks) => {
-				const { data: photo, error: photoError } = await createPhotoAction()
+			filesChunked.map(async (chunks) => {
+				const { data: photo, error: photoError } = await createPhotoAction({ fileType: chunks[0].type })
 				if (photoError) {
 					console.error(photoError)
 					setErrors((prev) => [...prev, photoError.message])

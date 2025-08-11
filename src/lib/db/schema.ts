@@ -96,8 +96,8 @@ export const shootsTable = pgTable("shoots", {
 export const photosTable = pgTable("photos", {
   ...tableDefaults,
   s3Path: text("s3_path").notNull(),
+  fileType: text("file_type").notNull(),
   featured: boolean("featured").default(false),
-
   shootId: text("shoot_id")
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),
