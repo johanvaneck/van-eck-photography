@@ -3,6 +3,8 @@ import {
   text,
   timestamp,
   boolean,
+  customType,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // Better Auth Schema - START
@@ -99,4 +101,22 @@ export const photosTable = pgTable("photos", {
   shootId: text("shoot_id")
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),
+});
+
+const bytea = customType<{
+  data: Buffer
+  default: false
+}>({
+  dataType() {
+    return 'bytea'
+  },
+})
+
+export const photoChunksTable = pgTable("photo_chunks", {
+  ...tableDefaults,
+  photoId: text("photo_id")
+    .notNull()
+    .references(() => photosTable.id, { onDelete: "cascade" }),
+  chunkIndex: integer("chunk_index").notNull(),
+  chunk: bytea("chunk").notNull(),
 });
