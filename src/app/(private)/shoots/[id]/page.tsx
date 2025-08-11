@@ -3,9 +3,6 @@ import { photosTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog"
 import { getS3Client } from "@/lib/s3"
-import { GetObjectCommand } from "@aws-sdk/client-s3"
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import Image from "next/image"
 import { PresignedImage } from "./components/presigned-image"
 import { Suspense } from "react"
 
