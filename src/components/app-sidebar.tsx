@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Camera, Frame, LucideIcon, SquareTerminal } from "lucide-react"
 import { Shoot } from "@/lib/db/types"
+import { routes } from "@/lib/routes"
 
 // This is sample data.
 const data = {
@@ -24,31 +25,15 @@ const data = {
   },
   navGroups: [
     {
-      title: "Playground",
-      url: "#",
+      title: "Website",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Categories",
+          url: routes.categories,
         },
       ],
-    },
-  ],
-  navFlat: [
-    {
-      name: "Shoots",
-      url: "/shoots",
-      icon: Camera,
     },
   ],
 }
@@ -68,9 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar> & 
       </SidebarHeader>
       <SidebarContent>
         <NavShoots shoots={props.shoots} />
-        {/*
-       <NavMain items={data.navGroups} />
-       */}
+        <NavMain items={data.navGroups} />
       </SidebarContent>
       <SidebarFooter>
       </SidebarFooter>

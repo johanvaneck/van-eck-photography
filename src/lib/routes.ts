@@ -5,4 +5,5 @@ export const routes = {
   shoots: "/shoots",
   shootsCreate: "/shoots/create",
   photos: "/photos",
+  categories: "/categories",
 }

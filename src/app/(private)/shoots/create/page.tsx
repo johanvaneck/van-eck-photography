@@ -7,6 +7,8 @@ import { shootsTable } from "@/lib/db/schema"
 import { nanoid } from "nanoid"
 import { routes } from "@/lib/routes"
 import { redirect } from "next/navigation"
+import { CategorySelect } from "./category-select"
+import { Suspense } from "react"
 
 export default function Page() {
   const handleSubmit = async (formData: FormData) => {
@@ -34,9 +36,9 @@ export default function Page() {
     <Form className="flex flex-col gap-4 max-w-md" action={handleSubmit}>
       <Label>Name</Label>
       <Input name="name" required />
-      {/*
-      TODO: Add category select
-      */}
+      <Suspense fallback={<div>Loading...</div>}>
+        <CategorySelect />
+      </Suspense>
       <FormButton text="Create Shoot" />
     </Form>
   )
