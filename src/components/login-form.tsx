@@ -22,6 +22,8 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div"> & { type: "sign-up" | "sign-in" }) {
   const [loading, setLoading] = useState(false)
+  const isSignUp = type === "sign-up"
+
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -40,7 +42,7 @@ export function LoginForm({
       const email = emailStr.toString()
       const password = passwordStr.toString()
 
-      if (type === "sign-up") {
+      if (isSignUp) {
         const nameStr = formData.get("name")
         if (!nameStr) {
           alert("Name is required")
@@ -73,12 +75,13 @@ export function LoginForm({
     } finally {
       setLoading(false)
     }
-  }, [type])
+  }, [isSignUp])
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle>{type === 'sign-up' ? "Sign Up" : "Sign In"} to your account</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
@@ -86,7 +89,7 @@ export function LoginForm({
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
-              {type === "sign-up" && (
+              {isSignUp && (
                 <div className="grid gap-3">
                   <Label htmlFor="email">Name</Label>
                   <Input
@@ -118,7 +121,7 @@ export function LoginForm({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className={cn("w-full", loading ? "animate-pulse" : "")} disabled={loading}>
-                  {type === "sign-up"
+                  {isSignUp
                     ? "Sign Up"
                     : "Sign In"}
                 </Button>
