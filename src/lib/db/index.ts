@@ -1,10 +1,6 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/libsql';
+import { createClient } from '@libsql/client';
 
-const dbUrl = process.env.DATABASE_URL;
+const client = createClient({ url: 'file:local.db' });
 
-if (!dbUrl) {
-	throw new Error('DATABASE_URL is not set');
-}
-
-export const db = drizzle(dbUrl);
+export const db = drizzle(client);

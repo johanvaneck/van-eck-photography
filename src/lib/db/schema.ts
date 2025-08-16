@@ -1,35 +1,33 @@
 import {
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
-  boolean,
-  customType,
   integer,
-} from "drizzle-orm/pg-core";
+  blob,
+} from "drizzle-orm/sqlite-core";
 
 // Better Auth Schema - START
-export const user = pgTable("user", {
+export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified")
+  emailVerified: integer("email_verified", { mode: "boolean" })
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at")
+  createdAt: integer("created_at", { mode: "timestamp" })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-  updatedAt: timestamp("updated_at")
+  updatedAt: integer("updated_at", { mode: "timestamp" })
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
 
-export const session = pgTable("session", {
+export const session = sqliteTable("session", {
   id: text("id").primaryKey(),
-  expiresAt: timestamp("expires_at").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: text("user_id")
@@ -37,7 +35,7 @@ export const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const account = pgTable("account", {
+export const account = sqliteTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -47,23 +45,23 @@ export const account = pgTable("account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at"),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  accessTokenExpiresAt: integer("access_token_expires_at", { mode: "timestamp" }),
+  refreshTokenExpiresAt: integer("refresh_token_expires_at", { mode: "timestamp" }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-export const verification = pgTable("verification", {
+export const verification = sqliteTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
     () => /* @__PURE__ */ new Date(),
   ),
-  updatedAt: timestamp("updated_at").$defaultFn(
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
     () => /* @__PURE__ */ new Date(),
   ),
 });
@@ -71,21 +69,21 @@ export const verification = pgTable("verification", {
 
 const tableDefaults = {
   id: text("id").primaryKey(),
-  createdAt: timestamp("created_at")
+  createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => /* @__PURE__ */ new Date()),
-  updatedAt: timestamp("updated_at")
+  updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => /* @__PURE__ */ new Date())
-    .$onUpdateFn(() => /* @__PURE__ */ new Date()),
+  // .$onUpdateFn(() => /* @__PURE__ */ new Date()), TODO: Find a way to do this in sqlite
 };
 
-export const categoriesTable = pgTable("categories", {
+export const categoriesTable = sqliteTable("categories", {
   ...tableDefaults,
   name: text("name").notNull(),
 });
 
-export const shootsTable = pgTable("shoots", {
+export const shootsTable = sqliteTable("shoots", {
   ...tableDefaults,
   name: text("name").notNull(),
 
@@ -93,30 +91,21 @@ export const shootsTable = pgTable("shoots", {
     .references(() => categoriesTable.id, { onDelete: "cascade" }),
 });
 
-export const photosTable = pgTable("photos", {
+export const photosTable = sqliteTable("photos", {
   ...tableDefaults,
   s3Path: text("s3_path").notNull(),
   fileType: text("file_type").notNull(),
-  featured: boolean("featured").default(false),
+  featured: integer("featured", { mode: "boolean" }).default(false),
   shootId: text("shoot_id")
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),
 });
 
-const bytea = customType<{
-  data: Buffer
-  default: false
-}>({
-  dataType() {
-    return 'bytea'
-  },
-})
-
-export const photoChunksTable = pgTable("photo_chunks", {
+export const photoChunksTable = sqliteTable("photo_chunks", {
   ...tableDefaults,
   photoId: text("photo_id")
     .notNull()
     .references(() => photosTable.id, { onDelete: "cascade" }),
   chunkIndex: integer("chunk_index").notNull(),
-  chunk: bytea("chunk").notNull(),
+  chunk: blob("chunk").notNull(),
 });
