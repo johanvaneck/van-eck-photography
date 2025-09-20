@@ -6,18 +6,20 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 export async function PresignedImage({
 	s3Client,
 	photo,
+	useLowRes = true,
 }: {
 	s3Client: S3Client
 	photo: Photo
+	useLowRes?: boolean
 }) {
-	const s3Path = photo.s3Path
+	const s3Path = useLowRes && photo.lowResS3Path ? photo.lowResS3Path : photo.s3Path;
 	const command = new GetObjectCommand({
 		Bucket: "vep",
 		Key: s3Path,
-	})
+	});
 	const presignedUrl = await getSignedUrl(s3Client, command, {
 		expiresIn: 60 * 60 * 3 // 3 hours
-	})
+	});
 
 	return (
 		<img
@@ -27,5 +29,5 @@ export async function PresignedImage({
 			width={100}
 			height={100}
 		/>
-	)
+	);
 }

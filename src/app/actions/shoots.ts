@@ -19,6 +19,7 @@ export async function createPhotoAction({ shootId, fileType }: { shootId: string
         id: photoId,
         shootId,
         s3Path: "",
+        lowResS3Path: "",
         fileType,
       })
       .returning()
@@ -30,12 +31,12 @@ export async function createPhotoAction({ shootId, fileType }: { shootId: string
   return { data: photo, error: null };
 }
 
-export async function getPresignedUploadUrlAction({ photoId, fileType }: { photoId: string, fileType: string }): Promise<Result<string>> {
+export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes }: { photoId: string, fileType: string, isLowRes?: boolean }): Promise<Result<string>> {
   const { data: s3Client, error: errorClient } = await getS3Client();
   if (errorClient) {
     return { data: null, error: errorClient };
   }
-  const s3Path = `photos/${photoId}`;
+  const s3Path = isLowRes ? `photos/${photoId}_lowres` : `photos/${photoId}`;
   const command = new PutObjectCommand({
     Bucket: "vep",
     Key: s3Path,
@@ -50,11 +51,13 @@ export async function getPresignedUploadUrlAction({ photoId, fileType }: { photo
   }
 }
 
-export async function updatePhotoS3PathAction({ photoId }: { photoId: string }): Promise<Result<string>> {
+export async function updatePhotoS3PathAction({ photoId, lowResS3Path }: { photoId: string, lowResS3Path?: string }): Promise<Result<string>> {
   const s3Path = `photos/${photoId}`;
+  const updateObj: any = { s3Path };
+  if (lowResS3Path) updateObj.lowResS3Path = lowResS3Path;
   const { error } = await tryCatch(
     db.update(photosTable)
-      .set({ s3Path })
+      .set(updateObj)
       .where(eq(photosTable.id, photoId))
   );
   if (error) {

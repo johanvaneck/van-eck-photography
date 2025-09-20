@@ -94,6 +94,7 @@ export const shootsTable = sqliteTable("shoots", {
 export const photosTable = sqliteTable("photos", {
   ...tableDefaults,
   s3Path: text("s3_path").notNull(),
+  lowResS3Path: text("low_res_s3_path"),
   fileType: text("file_type").notNull(),
   featured: integer("featured", { mode: "boolean" }).default(false),
   shootId: text("shoot_id")

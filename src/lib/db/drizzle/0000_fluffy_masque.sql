@@ -37,6 +37,7 @@ CREATE TABLE `photos` (
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`s3_path` text NOT NULL,
+	`low_res_s3_path` text,
 	`file_type` text NOT NULL,
 	`featured` integer DEFAULT false,
 	`shoot_id` text NOT NULL,
