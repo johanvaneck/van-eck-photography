@@ -1,9 +1,10 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { Result, tryCatch } from "./types/result";
 
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
-const region = process.env.AWS_REGION
+const accessKeyId = process.env.S3_ACCESS_KEY
+const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY
+const region = process.env.S3_REGION
+const endpoint = process.env.S3_ENDPOINT
 
 export async function getS3Client(): Promise<Result<S3Client>> {
   if (!accessKeyId) {
@@ -21,23 +22,13 @@ export async function getS3Client(): Promise<Result<S3Client>> {
     }
   }
 
-  if (!region) {
-    console.warn("S3_REGION is not set")
-    return {
-      data: null,
-      error: new Error("S3_REGION is not set")
-    }
-  }
-
   return tryCatch((async () => new S3Client({
     region,
+    endpoint,
     credentials: {
       accessKeyId,
       secretAccessKey,
     },
+    forcePathStyle: true,
   }))())
 }
-
-
-export const s3Bucket = "van-eck-photography"
-

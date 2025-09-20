@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Photo } from "@/lib/db/types";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -11,7 +12,7 @@ export async function PresignedImage({
 }) {
 	const s3Path = photo.s3Path
 	const command = new GetObjectCommand({
-		Bucket: "van-eck-photography",
+		Bucket: "vep",
 		Key: s3Path,
 	})
 	const presignedUrl = await getSignedUrl(s3Client, command, {
