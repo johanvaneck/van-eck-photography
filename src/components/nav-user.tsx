@@ -115,7 +115,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href="/auth/sign-out" className="flex items-center gap-2 w-full">
+                <a href={routes.signOut} className="flex items-center gap-2 w-full">
                   <LogOut />
                   Log out
                 </a>

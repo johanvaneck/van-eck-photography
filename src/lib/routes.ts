@@ -11,4 +11,5 @@ export const routes = {
   billing: "/billing",
   notifications: "/notifications",
   logout: "/logout",
+  signOut: "/auth/sign-out",
 }
