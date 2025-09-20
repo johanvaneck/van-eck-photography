@@ -23,7 +23,7 @@ export async function PresignedImage({
 
 	return (
 		<img
-			className="rounded-lg"
+			className="w-full h-auto object-cover rounded-lg"
 			src={presignedUrl}
 			alt={photo.id}
 			width={100}

@@ -21,32 +21,32 @@ export default async function Page({
   const { data: s3Client, error: errorS3Client } = await getS3Client()
   if (errorS3Client) {
     console.error(errorS3Client)
-    return <div>Error getting S3 client</div>
+    return <div className="text-red-500 text-center py-8">Error loading images</div>
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>Shoots Id: {shootId}</div>
-      <div>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="flex flex-col items-center justify-center py-6 gap-2">
+        <h1 className="text-2xl font-semibold text-gray-900">Shoot Gallery</h1>
+        <span className="text-sm text-gray-500">ID: {shootId}</span>
         <ShootsUploadDialog shootId={shootId} />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {photos
-          .filter(p => !!p.s3Path)
-          .map((photo) => (
-            <Suspense
-              key={photo.id}
-              fallback={<div className="animate-pulse bg-gray-100 rounded-lg w-full h-48" />}
-            >
-              <div className="group relative bg-white rounded-xl shadow hover:shadow-lg transition-shadow overflow-hidden cursor-pointer">
-                <PresignedImage s3Client={s3Client} photo={photo} />
-                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-xs bg-black/60 rounded px-2 py-1">Preview</span>
-                </div>
+      </header>
+      <main className="flex-1 w-full px-2 sm:px-4 md:px-8">
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2">
+          {photos.filter(p => !!p.s3Path).map((photo) => (
+            <Suspense key={photo.id} fallback={<div className="animate-pulse bg-gray-200 rounded-lg w-full aspect-[4/3] mb-2" />}>
+              <div className="mb-2 break-inside-avoid rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group">
+                <PresignedImage
+                  s3Client={s3Client}
+                  photo={photo}
+                  useLowRes={true}
+                  className="w-full h-auto object-cover"
+                />
               </div>
             </Suspense>
           ))}
-      </div>
-    </div >
+        </div>
+      </main>
+    </div>
   )
 }
