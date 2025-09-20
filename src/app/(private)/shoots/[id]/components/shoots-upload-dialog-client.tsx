@@ -16,7 +16,7 @@ import { FormButton } from "@/components/form-button"
 import { Button } from "@/components/ui/button"
 import Form from "next/form"
 import { Result } from "@/lib/types/result"
-import { useState } from "react"
+import { useRef, useState } from "react";
 
 export function ShootsUploadDialogClient({
 	createPhotoAction,
@@ -27,7 +27,17 @@ export function ShootsUploadDialogClient({
 	getPresignedUploadUrlAction: (params: { photoId: string, fileType: string, isLowRes?: boolean }) => Promise<Result<string>>,
 	updatePhotoS3PathAction: (params: { photoId: string, lowResS3Path?: string }) => Promise<Result<string>>
 }) {
-	const [status, setStatus] = useState("Waiting for upload");
+	const fileCountRef = useRef(0);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+	const [status, setStatus] = useState({
+		text: "Waiting for upload",
+		type: "info" as "info" | "error" | "success",
+		step: 0,
+		totalSteps: 0,
+		progress: 0,
+		files: 0,
+	});
 
 	async function generateLowResImage(file: File): Promise<File> {
 		return new Promise((resolve, reject) => {
@@ -52,34 +62,32 @@ export function ShootsUploadDialogClient({
 
 	const handleSubmit = async (formData: FormData) => {
 		const photos = formData.getAll("photos");
-		setStatus("Preparing upload...");
-		for (const file of photos) {
+		fileCountRef.current = photos.length;
+		setStatus(s => ({ ...s, totalSteps: photos.length * 5, step: 0, files: photos.length, progress: 0, text: "Preparing upload...", type: "info" }));
+		for (const [i, file] of photos.entries()) {
 			if (!(file instanceof File)) continue;
-			setStatus("Creating photo record...");
+			setStatus(s => ({ ...s, text: `Creating photo record (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: photo, error: photoError } = await createPhotoAction({ fileType: file.type });
 			if (photoError || !photo) {
-				setStatus("Error creating photo record");
+				setStatus(s => ({ ...s, text: "Error creating photo record", type: "error" }));
 				return;
 			}
-			// Generate low-res image
-			setStatus("Generating low-res image...");
+			setStatus(s => ({ ...s, text: `Generating low-res image (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			let lowResFile: File;
 			try {
 				lowResFile = await generateLowResImage(file);
 			} catch {
-				setStatus("Error generating low-res image");
+				setStatus(s => ({ ...s, text: "Error generating low-res image", type: "error" }));
 				return;
 			}
-			// Get presigned URLs
-			setStatus("Requesting presigned URLs...");
+			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
 			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
 			if (presignedError || !presignedUrl || lowResPresignedError || !lowResPresignedUrl) {
-				setStatus("Error getting presigned URLs");
+				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
-			// Upload both images
-			setStatus("Uploading original to S3...");
+			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			try {
 				await fetch(presignedUrl, {
 					method: "PUT",
@@ -87,10 +95,10 @@ export function ShootsUploadDialogClient({
 					body: file,
 				});
 			} catch {
-				setStatus("Error uploading original to S3");
+				setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
 				return;
 			}
-			setStatus("Uploading low-res to S3...");
+			setStatus(s => ({ ...s, text: `Uploading low-res (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			try {
 				await fetch(lowResPresignedUrl, {
 					method: "PUT",
@@ -98,53 +106,111 @@ export function ShootsUploadDialogClient({
 					body: lowResFile,
 				});
 			} catch {
-				setStatus("Error uploading low-res to S3");
+				setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
 				return;
 			}
-			// Update DB with both paths
-			setStatus("Updating database...");
+			setStatus(s => ({ ...s, text: `Updating database (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { error: updateError } = await updatePhotoS3PathAction({ photoId: photo.id, lowResS3Path: `photos/${photo.id}_lowres` });
 			if (updateError) {
-				setStatus("Error updating database");
+				setStatus(s => ({ ...s, text: "Error updating database", type: "error" }));
 				return;
 			}
-			setStatus("Upload complete!");
+			// Increment progress after each photo is fully uploaded and DB updated
+			setStatus(s => ({ ...s, progress: i + 1 }));
+		}
+		setStatus(s => ({ ...s, text: "Upload complete!", type: "success", progress: photos.length }));
+	}
+
+	function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+		if (e.dataTransfer.files && fileInputRef.current) {
+			const files = Array.from(e.dataTransfer.files);
+			setSelectedFiles(files);
+			fileInputRef.current.files = e.dataTransfer.files;
 		}
 	}
+
+	function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+	}
+
+	function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const files = e.target.files;
+		if (files) {
+			const fileArray = Array.from(files);
+			setSelectedFiles(fileArray);
+			setStatus(s => ({...s, files: fileArray.length}));
+		}
+	}
+
+	// Calculate progress percentage based on photos uploaded
+	const progressPercent = status.files > 0 ? Math.min(Math.round((status.progress / status.files) * 100), 100) : 0;
 
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button variant="outline">Open Dialog</Button>
+				<Button variant="default" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg shadow">Upload</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="sm:max-w-2xl p-10 rounded-2xl bg-background shadow-2xl max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>Upload Photos</DialogTitle>
-					<DialogDescription>
-						Upload photos to your Shoot.
+					<DialogTitle className="text-xl font-bold text-foreground">Upload Photos</DialogTitle>
+					<DialogDescription className="text-muted-foreground">
+						Select or drag images to upload. Low-res previews will be generated automatically.
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col gap-6">
 					<div className="flex flex-col gap-2">
-						<div className="text-green-500">{status}</div>
-					</div>
-				</div>
-
-				<Form className="flex flex-col gap-4" action={handleSubmit}>
-					<div className="grid gap-4">
-						<div className="grid gap-3">
-							<Label htmlFor="photos">Photos</Label>
-							<Input type="file" name="photos" multiple />
+						<div className={status.type === "error" ? "text-red-500 font-medium" : status.type === "success" ? "text-green-600 font-medium" : "text-primary font-medium"}>{status.text}</div>
+						<div className="flex flex-col w-full">
+							<div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+								<div
+									className="h-2 bg-primary transition-all duration-300"
+									style={{ width: `${progressPercent}%` }}
+								></div>
+							</div>
+							<div className="text-xs text-muted-foreground mt-1">{status.progress} of {status.files || 0} photos uploaded</div>
 						</div>
 					</div>
-					<DialogFooter>
-						<DialogClose asChild>
-							<Button variant="outline">Cancel</Button>
-						</DialogClose>
-						<FormButton text="Upload" />
-					</DialogFooter>
-				</Form>
+
+					<Form className="flex flex-col gap-8" action={handleSubmit}>
+						<div className="grid gap-6">
+							<div className="grid gap-3">
+								<Label htmlFor="photos" className="font-semibold text-foreground">Photos</Label>
+								<div
+									className="border-2 border-dashed border-primary rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-secondary/30 hover:bg-secondary transition-all w-full min-h-[160px]"
+									onDrop={handleDrop}
+									onDragOver={handleDragOver}
+									role="button"
+									aria-label="Drop files here or click to select"
+									onClick={() => fileInputRef.current?.click()}
+								>
+									<span className="text-muted-foreground text-lg mb-2">Drag & drop files here</span>
+									<span className="text-xs text-muted-foreground mb-2">or click to select</span>
+									<Input ref={fileInputRef} type="file" name="photos" multiple className="hidden" onChange={handleFileChange} />
+									{selectedFiles.length > 0 && (
+										<div className="mt-4 w-full max-h-40 overflow-y-auto">
+											<div className="text-sm font-medium text-foreground mb-2">Selected files ({selectedFiles.length}):</div>
+											<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+												{selectedFiles.map((file, idx) => (
+													<div key={idx} className="bg-background border border-secondary rounded-lg px-2 py-1 text-xs text-foreground truncate flex items-center">
+														{file.name}
+													</div>
+												))}
+											</div>
+										</div>
+									)}
+								</div>
+							</div>
+						</div>
+						<DialogFooter className="flex flex-row gap-2 justify-end mt-6">
+							<DialogClose asChild>
+								<Button variant="outline" className="rounded-lg">Cancel</Button>
+							</DialogClose>
+							<FormButton text="Upload" className="bg-primary text-primary-foreground font-semibold rounded-lg px-6 py-2 shadow" />
+						</DialogFooter>
+					</Form>
+				</div>
 			</DialogContent>
 		</Dialog>
 	)
