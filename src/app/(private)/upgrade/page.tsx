@@ -10,6 +10,15 @@ export default function UpgradePage() {
             <h1 className="text-xl font-bold mb-2 text-center">Upgrade to Pro</h1>
             <p className="text-muted-foreground mb-6 text-center">Unlock advanced features and priority support.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                <Card className="flex flex-col items-center p-8 w-full">
+                    <Badge variant="secondary" className="mb-2">Free</Badge>
+                    <div className="text-2xl font-bold">$0/month</div>
+                    <ul className="text-sm mt-2 mb-4 list-disc list-inside text-left">
+                        <li>Up to 3 shoots/month</li>
+                        <li>Basic support</li>
+                    </ul>
+                    <Button variant="outline">Stay Free</Button>
+                </Card>
                 <Card className="flex flex-col items-center p-8 border-2 border-primary bg-gradient-to-br from-primary/10 to-white shadow-xl relative w-full">
                     <span className="absolute top-4 right-4 text-yellow-500 text-lg font-bold">★</span>
                     <Badge variant="default" className="mb-2 text-base px-4 py-1 bg-primary text-white">Pro</Badge>
@@ -32,15 +41,6 @@ export default function UpgradePage() {
                         <li><span className="font-semibold">Custom branding</span></li>
                     </ul>
                     <Button variant="default" size="lg" className="w-full mt-2 bg-blue-600 hover:bg-blue-700">Choose Business</Button>
-                </Card>
-                <Card className="flex flex-col items-center p-8 w-full">
-                    <Badge variant="secondary" className="mb-2">Free</Badge>
-                    <div className="text-2xl font-bold">$0/month</div>
-                    <ul className="text-sm mt-2 mb-4 list-disc list-inside text-left">
-                        <li>Up to 3 shoots/month</li>
-                        <li>Basic support</li>
-                    </ul>
-                    <Button variant="outline">Stay Free</Button>
                 </Card>
             </div>
         </main>
