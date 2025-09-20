@@ -53,7 +53,7 @@ export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes 
 
 export async function updatePhotoS3PathAction({ photoId, lowResS3Path }: { photoId: string, lowResS3Path?: string }): Promise<Result<string>> {
   const s3Path = `photos/${photoId}`;
-  const updateObj: any = { s3Path };
+  const updateObj: Partial<typeof photosTable.$inferInsert> = { s3Path };
   if (lowResS3Path) updateObj.lowResS3Path = lowResS3Path;
   const { error } = await tryCatch(
     db.update(photosTable)

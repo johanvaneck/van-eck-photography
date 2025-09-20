@@ -6,8 +6,8 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 
-export default async function PublicGalleryPage({ params }: { params: { id: string } }) {
-    const shootId = params.id;
+export default async function PublicGalleryPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: shootId } = await params;
     const photos = await db
         .select()
         .from(photosTable)
