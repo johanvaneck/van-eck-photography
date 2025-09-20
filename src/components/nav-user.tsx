@@ -23,12 +23,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+
+import { routes } from "@/lib/routes"
 
 export function NavUser({
   user,
@@ -81,30 +84,42 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+              <DropdownMenuItem asChild>
+                <a href={routes.upgrade} className="flex items-center gap-2 w-full">
+                  <Sparkles />
+                  Upgrade to Pro
+                </a>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <a href={routes.account} className="flex items-center gap-2 w-full">
+                  <BadgeCheck />
+                  Account
+                </a>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <a href={routes.billing} className="flex items-center gap-2 w-full">
+                  <CreditCard />
+                  Billing
+                </a>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+              <DropdownMenuItem asChild>
+                <a href={routes.notifications} className="flex items-center gap-2 w-full">
+                  <Bell />
+                  Notifications
+                </a>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Log out
+              <DropdownMenuItem asChild>
+                <a href={routes.logout} className="flex items-center gap-2 w-full">
+                  <LogOut />
+                  Log out
+                </a>
+              </DropdownMenuItem>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
