@@ -40,7 +40,7 @@ export function AddCategoryDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline"><PlusIcon /> Add</Button>
+        <Button><PlusIcon /> Add</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

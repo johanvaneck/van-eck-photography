@@ -20,8 +20,8 @@ export async function CategoriesTable() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[200px]">Category</TableHead>
-          <TableHead className="w-[100px]">
+          <TableHead className="">Category</TableHead>
+          <TableHead className="w-[100px] p-2">
             <AddCategoryDialog />
           </TableHead>
           <TableHead></TableHead>
