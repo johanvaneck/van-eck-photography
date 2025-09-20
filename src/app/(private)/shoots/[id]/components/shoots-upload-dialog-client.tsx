@@ -83,10 +83,35 @@ export function ShootsUploadDialogClient({
 			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
 			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
-			if (presignedError || !presignedUrl || lowResPresignedError || !lowResPresignedUrl) {
+
+			if (presignedError) {
+				console.error(presignedError)
 				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
+
+			if (lowResPresignedError) {
+				console.error(lowResPresignedError)
+				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
+				return;
+			}
+
+			if (!presignedUrl) {
+				console.error("presignedUrl is null")
+				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
+				return;
+			}
+			if (!lowResPresignedUrl) {
+				console.error("lowResPresignedUrl is null")
+				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
+				return;
+			}
+			if (!presignedUrl) {
+				console.error("presignedUrl is null")
+				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
+				return;
+			}
+
 			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			try {
 				await fetch(presignedUrl, {
@@ -139,7 +164,7 @@ export function ShootsUploadDialogClient({
 		if (files) {
 			const fileArray = Array.from(files);
 			setSelectedFiles(fileArray);
-			setStatus(s => ({...s, files: fileArray.length}));
+			setStatus(s => ({ ...s, files: fileArray.length }));
 		}
 	}
 
