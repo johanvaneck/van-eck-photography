@@ -9,7 +9,7 @@ export default function UpgradePage() {
         <main className="flex flex-col items-center min-h-[60vh] w-full max-w-md mx-auto py-8">
             <h1 className="text-xl font-bold mb-2 text-center">Upgrade to Pro</h1>
             <p className="text-muted-foreground mb-6 text-center">Unlock advanced features and priority support.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
                 <Card className="flex flex-col items-center p-6 border-2 border-primary bg-gradient-to-br from-primary/10 to-white shadow-xl relative">
                     <span className="absolute top-4 right-4 text-yellow-500 text-lg font-bold">★</span>
                     <Badge variant="default" className="mb-2 text-base px-4 py-1 bg-primary text-white">Pro</Badge>
@@ -20,6 +20,18 @@ export default function UpgradePage() {
                         <li><span className="font-semibold">Priority support</span></li>
                     </ul>
                     <Button variant="default" size="lg" className="w-full mt-2">Upgrade</Button>
+                </Card>
+                <Card className="flex flex-col items-center p-6 border-2 border-blue-500 bg-gradient-to-br from-blue-100 to-white shadow relative">
+                    <span className="absolute top-4 right-4 text-blue-500 text-lg font-bold">🏢</span>
+                    <Badge variant="outline" className="mb-2 text-base px-4 py-1 border-blue-500 text-blue-700">Business</Badge>
+                    <div className="text-3xl font-extrabold text-blue-700 mb-2">$49<span className="text-lg font-normal">/month</span></div>
+                    <ul className="text-base mt-2 mb-4 list-disc list-inside text-left">
+                        <li><span className="font-semibold">Unlimited shoots</span></li>
+                        <li><span className="font-semibold">Advanced analytics</span></li>
+                        <li><span className="font-semibold">Dedicated support</span></li>
+                        <li><span className="font-semibold">Custom branding</span></li>
+                    </ul>
+                    <Button variant="default" size="lg" className="w-full mt-2 bg-blue-600 hover:bg-blue-700">Choose Business</Button>
                 </Card>
                 <Card className="flex flex-col items-center p-6">
                     <Badge variant="secondary" className="mb-2">Free</Badge>
