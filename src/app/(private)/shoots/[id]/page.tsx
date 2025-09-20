@@ -40,7 +40,6 @@ export default async function Page({
                   s3Client={s3Client}
                   photo={photo}
                   useLowRes={true}
-                  className="w-full h-auto object-cover"
                 />
               </div>
             </Suspense>
