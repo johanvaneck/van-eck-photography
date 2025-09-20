@@ -24,7 +24,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
     headers: await headers() // you need to pass the headers object.
   })
   const user = session?.user
-  console.log("User in layout:", user)
   if (!user) {
     return redirect("/auth/sign-in")
   }
