@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label"
 import { FormButton } from "@/components/form-button"
 import { Button } from "@/components/ui/button"
 import Form from "next/form"
-import { Result } from "@/lib/types/result"
+import { Result, tryCatch } from "@/lib/types/result"
 import { useRef, useState } from "react";
 
 export function ShootsUploadDialogClient({
@@ -73,42 +73,26 @@ export function ShootsUploadDialogClient({
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Generating low-res image (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			let lowResFile: File;
-			try {
-				lowResFile = await generateLowResImage(file);
-			} catch {
+			const {data: lowResFile, error: lowResError} = await tryCatch(generateLowResImage(file));
+
+			if (lowResError) {
 				setStatus(s => ({ ...s, text: "Error generating low-res image", type: "error" }));
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
-			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
 
+			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
 			if (presignedError) {
 				console.error(presignedError)
 				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
 
+			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
+
 			if (lowResPresignedError) {
 				console.error(lowResPresignedError)
 				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
-				return;
-			}
-
-			if (!presignedUrl) {
-				console.error("presignedUrl is null")
-				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
-				return;
-			}
-			if (!lowResPresignedUrl) {
-				console.error("lowResPresignedUrl is null")
-				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
-				return;
-			}
-			if (!presignedUrl) {
-				console.error("presignedUrl is null")
-				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
 
