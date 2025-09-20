@@ -30,15 +30,20 @@ export default async function Page({
       <div>
         <ShootsUploadDialog shootId={shootId} />
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {photos
           .filter(p => !!p.s3Path)
           .map((photo) => (
             <Suspense
               key={photo.id}
-              fallback={<div className="animate-pulse bg-gray-100 rounded-lg w-full h-full" />}
+              fallback={<div className="animate-pulse bg-gray-100 rounded-lg w-full h-48" />}
             >
-              <PresignedImage s3Client={s3Client} photo={photo} />
+              <div className="group relative bg-white rounded-xl shadow hover:shadow-lg transition-shadow overflow-hidden cursor-pointer">
+                <PresignedImage s3Client={s3Client} photo={photo} />
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="text-white text-xs bg-black/60 rounded px-2 py-1">Preview</span>
+                </div>
+              </div>
             </Suspense>
           ))}
       </div>
