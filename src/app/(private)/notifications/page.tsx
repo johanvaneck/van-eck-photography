@@ -1,9 +1,7 @@
 
-
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-
 
 export default function NotificationsPage() {
     return (

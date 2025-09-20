@@ -1,10 +1,8 @@
 
-
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { routes } from "@/lib/routes"
-
 
 export default function LogoutPage() {
     return (
