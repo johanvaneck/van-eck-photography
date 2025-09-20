@@ -3,8 +3,9 @@ import { photosTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog"
 import { getS3Client } from "@/lib/s3"
-import { PresignedImage } from "./components/presigned-image"
-import { Suspense } from "react"
+import GalleryClient from "./components/gallery-client"
+import { GetObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 export default async function Page({
   params,
@@ -24,6 +25,20 @@ export default async function Page({
     return <div className="text-red-500 text-center py-8">Error loading images</div>
   }
 
+  // Generate presigned URLs for all images (low-res and high-res)
+  const presignedPhotos = await Promise.all(
+    photos.filter(p => !!p.s3Path).map(async (photo) => {
+      const lowResKey = photo.lowResS3Path || photo.s3Path
+      const lowResUrl = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: "vep", Key: lowResKey }), { expiresIn: 60 * 60 })
+      const highResUrl = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: "vep", Key: photo.s3Path }), { expiresIn: 60 * 60 })
+      return {
+        ...photo,
+        lowResUrl,
+        highResUrl,
+      }
+    })
+  )
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="flex flex-col items-center justify-center py-6 gap-2">
@@ -32,19 +47,7 @@ export default async function Page({
         <ShootsUploadDialog shootId={shootId} />
       </header>
       <main className="flex-1 w-full px-2 sm:px-4 md:px-8">
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2">
-          {photos.filter(p => !!p.s3Path).map((photo) => (
-            <Suspense key={photo.id} fallback={<div className="animate-pulse bg-gray-200 rounded-lg w-full aspect-[4/3] mb-2" />}>
-              <div className="mb-2 break-inside-avoid rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group">
-                <PresignedImage
-                  s3Client={s3Client}
-                  photo={photo}
-                  useLowRes={true}
-                />
-              </div>
-            </Suspense>
-          ))}
-        </div>
+        <GalleryClient photos={presignedPhotos} />
       </main>
     </div>
   )
