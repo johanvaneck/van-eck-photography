@@ -23,6 +23,7 @@ export function LoginForm({
 }: React.ComponentProps<"div"> & { type: "sign-up" | "sign-in" }) {
   const [loading, setLoading] = useState(false)
   const isSignUp = type === "sign-up"
+  const isSignIn = type === "sign-in"
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -126,6 +127,18 @@ export function LoginForm({
                     : "Sign In"}
                 </Button>
               </div>
+              {isSignIn && (
+                <div className="flex gap-4 justify-center items-center">
+                  <span>{"Don't have an account?"}</span>
+                  <a href={routes.signUp}>Sign Up</a>
+                </div>
+              )}
+              {isSignUp && (
+                <div className="flex gap-4 justify-center items-center">
+                  <span>{"Already have an account?"}</span>
+                  <a href={routes.signIn}>Sign In</a>
+                </div>
+              )}
             </div>
           </form>
         </CardContent>
