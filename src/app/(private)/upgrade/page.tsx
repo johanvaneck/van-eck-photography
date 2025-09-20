@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function UpgradePage() {
     return (
-    <main className="flex flex-col items-center min-h-[60vh] w-full max-w-5xl mx-auto py-8 px-4">
+        <main className="flex flex-col items-center min-h-[60vh] w-full max-w-5xl mx-auto py-8 px-4">
             <h1 className="text-xl font-bold mb-2 text-center">Upgrade to Pro</h1>
             <p className="text-muted-foreground mb-6 text-center">Unlock advanced features and priority support.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
@@ -17,9 +17,6 @@ export default function UpgradePage() {
                         <li>Up to 3 shoots/month</li>
                         <li>Basic support</li>
                     </ul>
-                    <div className="mt-auto w-full flex justify-center">
-                        <Button variant="outline">Stay Free</Button>
-                    </div>
                 </Card>
                 <Card className="flex flex-col items-center p-8 border-2 border-primary bg-gradient-to-br from-primary/10 to-white shadow-xl relative w-full h-full">
                     <span className="absolute top-4 right-4 text-yellow-500 text-lg font-bold">★</span>
