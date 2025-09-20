@@ -35,7 +35,8 @@ export async function createPhotoAction({ shootId, fileType }: { shootId: string
 export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes }: { photoId: string, fileType: string, isLowRes?: boolean }): Promise<Result<string>> {
   const { data: s3Client, error: errorClient } = await getS3Client();
   if (errorClient) {
-    return { data: null, error: errorClient };
+    console.error("Error getting S3 client:", errorClient);
+    return { data: null, error: new Error("Error getting S3 client")};
   }
   const s3Path = isLowRes ? `photos/${photoId}_lowres` : `photos/${photoId}`;
   const command = new PutObjectCommand({

@@ -8,6 +8,7 @@ const endpoint = process.env.S3_ENDPOINT
 
 export async function getS3Client(): Promise<Result<S3Client>> {
   if (!accessKeyId) {
+    console.warn("S3_ACCESS_KEY_ID is not set");
     return {
       data: null,
       error: new Error("S3_ACCESS_KEY_ID is not set")
