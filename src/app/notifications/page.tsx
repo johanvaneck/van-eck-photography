@@ -1,6 +1,9 @@
 
+
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+
 
 export default function NotificationsPage() {
     return (
@@ -9,16 +12,29 @@ export default function NotificationsPage() {
                 <CardHeader>
                     <h1 className="text-xl font-bold">Notifications</h1>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div>
-                        <div className="font-medium">Your subscription was renewed.</div>
-                        <div className="text-xs text-muted-foreground">Sep 1, 2025</div>
-                    </div>
-                    <Separator />
-                    <div>
-                        <div className="font-medium">New feature: Team sharing is now available!</div>
-                        <div className="text-xs text-muted-foreground">Aug 28, 2025</div>
-                    </div>
+                <CardContent>
+                    <Tabs defaultValue="all" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-4">
+                            <TabsTrigger value="all">All</TabsTrigger>
+                            <TabsTrigger value="updates">Updates</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="all" className="space-y-4">
+                            <Alert>
+                                <AlertTitle>Your subscription was renewed</AlertTitle>
+                                <AlertDescription>Sep 1, 2025</AlertDescription>
+                            </Alert>
+                            <Alert>
+                                <AlertTitle>New feature: Team sharing is now available!</AlertTitle>
+                                <AlertDescription>Aug 28, 2025</AlertDescription>
+                            </Alert>
+                        </TabsContent>
+                        <TabsContent value="updates" className="space-y-4">
+                            <Alert>
+                                <AlertTitle>New feature: Team sharing is now available!</AlertTitle>
+                                <AlertDescription>Aug 28, 2025</AlertDescription>
+                            </Alert>
+                        </TabsContent>
+                    </Tabs>
                 </CardContent>
             </Card>
         </main>

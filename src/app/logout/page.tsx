@@ -1,7 +1,10 @@
 
+
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { routes } from "@/lib/routes"
+
 
 export default function LogoutPage() {
     return (
@@ -10,8 +13,11 @@ export default function LogoutPage() {
                 <CardHeader>
                     <h1 className="text-xl font-bold">Log out</h1>
                 </CardHeader>
-                <CardContent className="space-y-4 text-center">
-                    <p>You have been logged out.</p>
+                <CardContent className="space-y-6 text-center">
+                    <Alert>
+                        <AlertTitle>You have been logged out.</AlertTitle>
+                        <AlertDescription>We hope to see you again soon!</AlertDescription>
+                    </Alert>
                     <Button asChild variant="outline">
                         <a href={routes.signIn}>Sign in again</a>
                     </Button>
