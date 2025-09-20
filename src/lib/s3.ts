@@ -7,6 +7,8 @@ const region = process.env.S3_REGION
 const endpoint = process.env.S3_ENDPOINT
 
 export async function getS3Client(): Promise<Result<S3Client>> {
+  console.log("Creating S3 client with config:", { region, endpoint });
+
   if (!accessKeyId) {
     console.warn("S3_ACCESS_KEY_ID is not set");
     return {

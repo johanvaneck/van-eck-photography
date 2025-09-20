@@ -33,10 +33,11 @@ export async function createPhotoAction({ shootId, fileType }: { shootId: string
 }
 
 export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes }: { photoId: string, fileType: string, isLowRes?: boolean }): Promise<Result<string>> {
+  console.log("Getting presigned upload URL for:", { photoId, fileType, isLowRes });
   const { data: s3Client, error: errorClient } = await getS3Client();
   if (errorClient) {
     console.error("Error getting S3 client:", errorClient);
-    return { data: null, error: new Error("Error getting S3 client")};
+    return { data: null, error: new Error("Error getting S3 client") };
   }
   const s3Path = isLowRes ? `photos/${photoId}_lowres` : `photos/${photoId}`;
   const command = new PutObjectCommand({
@@ -44,12 +45,12 @@ export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes 
     Key: s3Path,
     ContentType: fileType,
   });
-  try {
-    const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 10 });
-    return { data: presignedUrl, error: null };
-  } catch (e) {
-    return { data: null, error: e as Error };
+  const { data: presignedUrl, error: presignedError } = await tryCatch(getSignedUrl(s3Client, command, { expiresIn: 60 * 10 }));
+  if (presignedError) {
+    console.error("Error getting presigned URL:", presignedError);
+    return { data: null, error: new Error("Error getting presigned URL") };
   }
+  return { data: presignedUrl, error: null };
 }
 
 export async function updatePhotoS3PathAction({ photoId, lowResS3Path }: { photoId: string, lowResS3Path?: string }): Promise<Result<string>> {
