@@ -6,6 +6,7 @@ import { getS3Client } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export async function getShoots() {
   return await tryCatch(db.select().from(shootsTable));
@@ -43,7 +44,6 @@ export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes 
     ContentType: fileType,
   });
   try {
-    const { getSignedUrl } = await import("@aws-sdk/s3-request-presigner");
     const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 10 });
     return { data: presignedUrl, error: null };
   } catch (e) {
