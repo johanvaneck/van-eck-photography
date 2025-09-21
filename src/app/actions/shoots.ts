@@ -1,25 +1,72 @@
 "use server";
-import { db } from "@/lib/db";
+
+import { and, desc, eq, gte, lt } from "drizzle-orm";
+import { format, addMonths } from "date-fns";
 import { shootsTable, picturesTable } from "@/lib/db/schema";
-import { Result, tryCatch } from "@/lib/types/result";
-import { getS3Client } from "@/lib/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { eq } from "drizzle-orm";
+import { Result } from "@/lib/types/result";
 import { nanoid } from "nanoid";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { CreateShoot } from "@/lib/db/types";
+import { CreateShoot, Shoot } from "@/lib/db/types";
 import { revalidatePath } from "next/cache";
+import { db } from "@/lib/db";
+import { getS3Client } from "@/lib/s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { tryCatch } from "@/lib/types/result";
 
-export async function getShoots() {
-  return await tryCatch(db.select().from(shootsTable));
+export async function createShoot({
+  name,
+  userId,
+  categoryId,
+}: {
+  name: string;
+  userId: string;
+  categoryId?: string;
+}) {
+  const id = "shoot_" + nanoid();
+  const result = await tryCatch(
+    db.insert(shootsTable).values({ id, name, userId, categoryId }),
+  );
+  revalidatePath(`/shoots/${id}`);
+  return result;
+}
+
+export async function getShootsByMonth(
+  start: Date,
+  end: Date,
+): Promise<Result<Shoot[]>> {
+  return await tryCatch(
+    db
+      .select()
+      .from(shootsTable)
+      .where(
+        and(
+          gte(shootsTable.time, format(start, "yyyy-MM-dd")),
+          lt(shootsTable.time, format(addMonths(end, 1), "yyyy-MM-dd")),
+        ),
+      ),
+  );
+}
+
+export async function getRecentShoots(): Promise<Result<Shoot[]>> {
+  return await tryCatch(
+    db.select().from(shootsTable).orderBy(desc(shootsTable.updatedAt)).limit(5),
+  );
+}
+
+export async function getShoots(userId: string) {
+  return await tryCatch(
+    db.select().from(shootsTable).where(eq(shootsTable.userId, userId)),
+  );
 }
 
 export async function createPictureAction({
   shootId,
   fileType,
+  userId,
 }: {
   shootId: string;
   fileType: string;
+  userId: string;
 }): Promise<Result<typeof picturesTable.$inferSelect>> {
   const pictureId = "picture_" + nanoid();
   const { data, error } = await tryCatch(
@@ -28,6 +75,7 @@ export async function createPictureAction({
       .values({
         id: pictureId,
         shootId,
+        userId,
         s3Path: "",
         lowResS3Path: "",
         fileType,
@@ -37,7 +85,8 @@ export async function createPictureAction({
   if (error) {
     return { data: null, error };
   }
-  const [picture] = data;
+
+  const picture = Array.isArray(data) ? data[0] : data;
   return { data: picture, error: null };
 }
 
@@ -105,7 +154,9 @@ export async function updateShoot(shoot: CreateShoot) {
     db
       .update(shootsTable)
       .set(shoot)
-      .where(eq(shootsTable.id, shoot.id))
+      .where(
+        and(eq(shootsTable.id, shoot.id), eq(shootsTable.userId, shoot.userId)),
+      )
       .returning(),
   );
   revalidatePath(`/shoots/${shoot.id}`);

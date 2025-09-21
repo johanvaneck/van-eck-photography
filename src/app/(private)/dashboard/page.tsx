@@ -1,16 +1,6 @@
-import { db } from "@/lib/db";
-import { shootsTable } from "@/lib/db/schema";
-import { and, gte, lt } from "drizzle-orm";
+import { getShootsByMonth } from "@/app/actions/shoots";
 import { Shoot } from "@/lib/db/types";
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  addMonths,
-  subMonths,
-  getDate,
-  parseISO,
-} from "date-fns";
+import { startOfMonth, endOfMonth, getDate, parseISO } from "date-fns";
 import MonthNav from "./month-nav";
 import {
   Table,
@@ -33,26 +23,18 @@ import { updateShoot } from "@/app/actions/shoots";
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { year?: string; month?: string };
+  searchParams?: Promise<Record<string, string>>;
 }) {
+  const params = searchParams ? await searchParams : {};
   const now = new Date();
-  const year = searchParams?.year
-    ? parseInt(searchParams.year)
-    : now.getFullYear();
-  const month = searchParams?.month
-    ? parseInt(searchParams.month)
-    : now.getMonth();
+  const year = params.year ? parseInt(params.year) : now.getFullYear();
+  const month = params.month ? parseInt(params.month) : now.getMonth();
   const start = startOfMonth(new Date(year, month, 1));
   const end = endOfMonth(start);
-  const shoots: Shoot[] = await db
-    .select()
-    .from(shootsTable)
-    .where(
-      and(
-        gte(shootsTable.time, format(start, "yyyy-MM-dd")),
-        lt(shootsTable.time, format(addMonths(end, 1), "yyyy-MM-dd")),
-      ),
-    );
+  const { data: shoots, error } = await getShootsByMonth(start, end);
+  if (error) {
+    return <div>Error loading shoots: {error.message}</div>;
+  }
 
   // Group shoots by day
   const shootsByDay = shoots.reduce(

@@ -12,28 +12,28 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { db } from "@/lib/db";
-import { categoriesTable } from "@/lib/db/schema";
-import { PlusIcon } from "lucide-react";
-import { nanoid } from "nanoid";
-import { revalidatePath } from "next/cache";
+import { createCategory } from "@/app/actions/categories";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Form from "next/form";
+import { PlusIcon } from "lucide-react";
 
 export function AddCategoryDialog() {
   const handleSubmit = async (formData: FormData) => {
     "use server";
-    const id = "category_" + nanoid();
     const nameForm = formData.get("name");
     if (!nameForm) {
       console.error("Name is required");
       return;
     }
     const name = nameForm.toString();
-    await db.insert(categoriesTable).values({
-      id,
-      name,
-    });
-    revalidatePath("/categories");
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user?.id;
+    if (!userId) {
+      console.error("User not found");
+      return;
+    }
+    await createCategory({ name, userId });
   };
   return (
     <Dialog>

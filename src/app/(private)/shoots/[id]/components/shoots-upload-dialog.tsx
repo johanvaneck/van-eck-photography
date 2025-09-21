@@ -4,11 +4,18 @@ import {
   getPresignedUploadUrlAction as serverGetPresignedUploadUrlAction,
   updatePictureS3PathAction as serverUpdatePictureS3PathAction,
 } from "@/app/actions/shoots";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export function ShootsUploadDialog({ shootId }: { shootId: string }) {
   async function createPictureAction(params: { fileType: string }) {
     "use server";
-    return await serverCreatePictureAction({ ...params, shootId });
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new Error("User not found");
+    }
+    return await serverCreatePictureAction({ ...params, shootId, userId });
   }
   async function getPresignedUploadUrlAction(params: {
     pictureId: string;

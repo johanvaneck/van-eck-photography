@@ -80,6 +80,9 @@ const tableDefaults = {
 export const categoriesTable = sqliteTable("categories", {
   ...tableDefaults,
   name: text("name").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const shootsTable = sqliteTable("shoots", {
@@ -92,7 +95,9 @@ export const shootsTable = sqliteTable("shoots", {
   status: text("status"),
   price_charged: integer("price_charged"),
   notes: text("notes"),
-
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   categoryId: text("category_id").references(() => categoriesTable.id, {
     onDelete: "cascade",
   }), // optional
@@ -104,6 +109,9 @@ export const picturesTable = sqliteTable("pictures", {
   lowResS3Path: text("low_res_s3_path"),
   fileType: text("file_type").notNull(),
   featured: integer("featured", { mode: "boolean" }).default(false).notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   shootId: text("shoot_id")
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),

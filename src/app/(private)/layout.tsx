@@ -15,9 +15,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { routes } from "@/lib/routes";
-import { db } from "@/lib/db";
-import { shootsTable } from "@/lib/db/schema";
-import { desc } from "drizzle-orm";
+import { getRecentShoots } from "@/app/actions/shoots";
 
 export default async function Layout({
   children,
@@ -32,11 +30,10 @@ export default async function Layout({
     return redirect("/auth/sign-in");
   }
 
-  const shoots = await db
-    .select()
-    .from(shootsTable)
-    .orderBy(desc(shootsTable.updatedAt))
-    .limit(5);
+  const { data: shoots, error } = await getRecentShoots();
+  if (error) {
+    return <div>Error loading shoots: {error.message}</div>;
+  }
 
   return (
     <SidebarProvider>

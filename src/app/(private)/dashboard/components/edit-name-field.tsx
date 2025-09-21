@@ -5,31 +5,31 @@ import { updateShoot } from "@/app/actions/shoots";
 import { Input } from "@/components/ui/input";
 
 export function EditNameField({
-    shoot,
-    updateShootAction,
+  shoot,
+  updateShootAction,
 }: {
-    shoot: Shoot;
-    updateShootAction: typeof updateShoot;
+  shoot: Shoot;
+  updateShootAction: typeof updateShoot;
 }) {
-    const [value, setValue] = useState(shoot.name || "");
+  const [value, setValue] = useState(shoot.name || "");
 
-    const handleBlur = async () => {
-        if (value !== shoot.name) {
-            await updateShootAction({ ...shoot, name: value });
+  const handleBlur = async () => {
+    if (value !== shoot.name) {
+      await updateShootAction({ ...shoot, name: value });
+    }
+  };
+
+  return (
+    <Input
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={handleBlur}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          (e.target as HTMLInputElement).blur();
         }
-    };
-
-    return (
-        <Input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={handleBlur}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                }
-            }}
-            style={{ width: "100%" }}
-        />
-    );
+      }}
+      style={{ width: "100%" }}
+    />
+  );
 }

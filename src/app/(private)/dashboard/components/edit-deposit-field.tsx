@@ -5,35 +5,35 @@ import { updateShoot } from "@/app/actions/shoots";
 import { Input } from "@/components/ui/input";
 
 export function EditDepositField({
-    shoot,
-    updateShootAction,
+  shoot,
+  updateShootAction,
 }: {
-    shoot: Shoot;
-    updateShootAction: typeof updateShoot;
+  shoot: Shoot;
+  updateShootAction: typeof updateShoot;
 }) {
-    const [value, setValue] = useState(shoot.deposit?.toString() || "");
+  const [value, setValue] = useState(shoot.deposit?.toString() || "");
 
-    const handleBlur = async () => {
-        if (value !== (shoot.deposit?.toString() || "")) {
-            await updateShootAction({
-                ...shoot,
-                deposit: value ? parseFloat(value) : undefined,
-            });
+  const handleBlur = async () => {
+    if (value !== (shoot.deposit?.toString() || "")) {
+      await updateShootAction({
+        ...shoot,
+        deposit: value ? parseFloat(value) : undefined,
+      });
+    }
+  };
+
+  return (
+    <Input
+      type="number"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={handleBlur}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          (e.target as HTMLInputElement).blur();
         }
-    };
-
-    return (
-        <Input
-            type="number"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={handleBlur}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    (e.target as HTMLInputElement).blur();
-                }
-            }}
-            style={{ width: "100%" }}
-        />
-    );
+      }}
+      style={{ width: "100%" }}
+    />
+  );
 }

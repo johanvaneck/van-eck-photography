@@ -1,4 +1,6 @@
 import * as React from "react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 import {
   Select,
@@ -12,7 +14,12 @@ import {
 import { getCategories } from "@/app/actions/categories";
 
 export async function CategorySelect() {
-  const { data, error } = await getCategories();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) {
+    return <div>Please sign in</div>;
+  }
+  const { data, error } = await getCategories(userId);
   if (error) {
     console.error(error);
     return <div>Error: {error.message}</div>;

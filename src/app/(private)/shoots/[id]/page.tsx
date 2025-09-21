@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { picturesTable, shootsTable } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog";
 import { EditShootDialog } from "./components/edit-shoot-dialog";
 import { updateShoot } from "@/app/actions/shoots";
@@ -10,6 +10,8 @@ import { GalleryClient } from "./components/gallery-client";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { deletePicture, markPictureFeatured } from "@/app/actions/pictures";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function Page({
   params,
@@ -19,16 +21,23 @@ export default async function Page({
   const { id: shootId } = await params;
 
   // Get shoot details
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) {
+    return <div>Please sign in</div>;
+  }
   const shootArr = await db
     .select()
     .from(shootsTable)
-    .where(eq(shootsTable.id, shootId));
+    .where(and(eq(shootsTable.id, shootId), eq(shootsTable.userId, userId)));
   const shoot = shootArr[0];
 
   const pictures = await db
     .select()
     .from(picturesTable)
-    .where(eq(picturesTable.shootId, shootId));
+    .where(
+      and(eq(picturesTable.shootId, shootId), eq(picturesTable.userId, userId)),
+    );
 
   const { data: s3Client, error: errorS3Client } = await getS3Client();
   if (errorS3Client) {
