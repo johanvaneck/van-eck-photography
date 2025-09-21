@@ -100,11 +100,11 @@ export function GalleryClient({
 
   return (
     <>
-      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-1">
+      <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-2">
         {pictureList.map((picture) => (
           <div
             key={picture.id}
-            className="mb-1 break-inside-avoid rounded-xs bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group relative"
+            className="mb-2 break-inside-avoid rounded-xs bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group relative"
           >
             <div onClick={() => handlePreview(picture)}>
               <Image
