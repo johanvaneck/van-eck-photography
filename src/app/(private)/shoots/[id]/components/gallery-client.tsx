@@ -44,7 +44,7 @@ function CustomModal({ children, onClose, previewPhoto }: { children: React.Reac
   );
 }
 
-export default function GalleryClient({ photos }: { photos: PhotoType[] }) {
+export function GalleryClient({ photos }: { photos: PhotoType[] }) {
   const [previewPhoto, setPreviewPhoto] = useState<PhotoType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -60,17 +60,17 @@ export default function GalleryClient({ photos }: { photos: PhotoType[] }) {
 
   return (
     <>
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-1">
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className="mb-2 break-inside-avoid rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group"
+            className="mb-1 break-inside-avoid rounded bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group"
             onClick={() => handlePreview(photo)}
           >
             <Image
               src={photo.lowResUrl}
               alt={photo.id}
-              className="w-full h-auto object-cover rounded-lg"
+              className="w-full h-auto object-cover rounded"
               width={300}
               height={200}
               unoptimized

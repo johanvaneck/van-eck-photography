@@ -1,9 +1,10 @@
 import { db } from "@/lib/db"
-import { photosTable } from "@/lib/db/schema"
+import { photosTable, shootsTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog"
+import { ShareButton } from "./components/share-button"
 import { getS3Client } from "@/lib/s3"
-import GalleryClient from "./components/gallery-client"
+import { GalleryClient } from "./components/gallery-client"
 import { GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
@@ -13,6 +14,13 @@ export default async function Page({
   params: Promise<{ id: string }>
 }) {
   const { id: shootId } = await params
+
+  // Get shoot details
+  const shootArr = await db
+    .select()
+    .from(shootsTable)
+    .where(eq(shootsTable.id, shootId));
+  const shoot = shootArr[0];
 
   const photos = await db
     .select()
@@ -39,14 +47,23 @@ export default async function Page({
     })
   )
 
+  // Format shoot time
+  const shootTime = shoot?.createdAt ? new Date(shoot.createdAt).toLocaleString() : null;
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="flex flex-col items-center justify-center py-6 gap-2">
-        <h1 className="text-2xl font-semibold text-gray-900">Shoot Gallery</h1>
-        <span className="text-sm text-gray-500">ID: {shootId}</span>
-        <ShootsUploadDialog shootId={shootId} />
+    <div className="flex flex-col min-h-screen bg-background rounded">
+      <header className="flex flex-col items-center justify-center py-8 gap-2 border-b border-border bg-card shadow rounded mb-4 overflow-x-hidden">
+        <h1 className="text-3xl font-bold mb-2 text-foreground rounded">{shoot?.name || "Shoot"}</h1>
+        <div className="flex flex-row items-center gap-4 text-sm text-muted-foreground rounded py-1">
+          <span>ID: {shootId}</span>
+          {shootTime && <span>• {shootTime}</span>}
+        </div>
+        <div className="flex flex-row gap-2 mt-2">
+          <ShootsUploadDialog shootId={shootId} />
+          <ShareButton shootId={shootId} />
+        </div>
       </header>
-      <main className="flex-1 w-full px-2 sm:px-4 md:px-8">
+      <main className="flex-1 w-full">
         <GalleryClient photos={presignedPhotos} />
       </main>
     </div>
