@@ -7,6 +7,7 @@ import { getS3Client } from "@/lib/s3"
 import { GalleryClient } from "./components/gallery-client"
 import { GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import { markPhotoFeatured } from "@/app/actions/photos"
 
 export default async function Page({
   params,
@@ -64,7 +65,10 @@ export default async function Page({
         </div>
       </header>
       <main className="flex-1 w-full">
-        <GalleryClient photos={presignedPhotos} />
+        <GalleryClient
+          photos={presignedPhotos}
+          markPhotoFeaturedAction={markPhotoFeatured}
+        />
       </main>
     </div>
   )

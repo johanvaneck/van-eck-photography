@@ -95,7 +95,7 @@ export const photosTable = sqliteTable("photos", {
   s3Path: text("s3_path").notNull(),
   lowResS3Path: text("low_res_s3_path"),
   fileType: text("file_type").notNull(),
-  featured: integer("featured", { mode: "boolean" }).default(false),
+  featured: integer("featured", { mode: "boolean" }).default(false).notNull(),
   shootId: text("shoot_id")
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),

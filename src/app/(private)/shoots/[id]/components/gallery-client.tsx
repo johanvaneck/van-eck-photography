@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
+import { markPhotoFeatured } from "@/app/actions/photos";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
-type PhotoType = { id: string; lowResUrl: string; highResUrl: string };
+type PhotoType = { id: string; lowResUrl: string; highResUrl: string; featured: boolean };
 
 function CustomModal({ children, onClose, previewPhoto }: { children: React.ReactNode; onClose: () => void; previewPhoto: PhotoType }) {
   useEffect(() => {
@@ -44,7 +46,22 @@ function CustomModal({ children, onClose, previewPhoto }: { children: React.Reac
   );
 }
 
-export function GalleryClient({ photos }: { photos: PhotoType[] }) {
+export function GalleryClient({
+  photos,
+  markPhotoFeaturedAction,
+}: {
+  photos: PhotoType[]
+  markPhotoFeaturedAction: typeof markPhotoFeatured
+}) {
+  const [photoList, setPhotoList] = useState<PhotoType[]>(photos);
+
+  async function handleToggleFeatured(photo: PhotoType) {
+    const newFeatured = !photo.featured;
+    const { success } = await markPhotoFeaturedAction({ photoId: photo.id, featured: newFeatured });
+    if (success) {
+      setPhotoList(prev => prev.map(p => p.id === photo.id ? { ...p, featured: newFeatured } : p));
+    }
+  }
   const [previewPhoto, setPreviewPhoto] = useState<PhotoType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -61,20 +78,37 @@ export function GalleryClient({ photos }: { photos: PhotoType[] }) {
   return (
     <>
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-1">
-        {photos.map((photo) => (
+        {photoList.map((photo) => (
           <div
             key={photo.id}
-            className="mb-1 break-inside-avoid rounded bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group"
-            onClick={() => handlePreview(photo)}
+            className="mb-1 break-inside-avoid rounded bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer group relative"
           >
-            <Image
-              src={photo.lowResUrl}
-              alt={photo.id}
-              className="w-full h-auto object-cover rounded"
-              width={300}
-              height={200}
-              unoptimized
-            />
+            <div onClick={() => handlePreview(photo)}>
+              <Image
+                src={photo.lowResUrl}
+                alt={photo.id}
+                className="w-full h-auto object-cover rounded"
+                width={300}
+                height={200}
+                unoptimized
+              />
+            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="absolute top-2 right-2 p-1 rounded-full bg-white/80 shadow"
+                  onClick={() => handleToggleFeatured(photo)}
+                  style={{ zIndex: 2 }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={photo.featured ? "#3b82f6" : "none"} stroke="#3b82f6" strokeWidth={2} className="w-5 h-5 cursor-pointer">
+                    <path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16l-7-4-7 4V4z" />
+                  </svg>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6}>
+                {photo.featured ? "Unmark as featured" : "Mark as featured"}
+              </TooltipContent>
+            </Tooltip>
           </div>
         ))}
       </div>
