@@ -22,14 +22,14 @@ CREATE TABLE `categories` (
 	`name` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `photos` (
+CREATE TABLE `pictures` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`s3_path` text NOT NULL,
 	`low_res_s3_path` text,
 	`file_type` text NOT NULL,
-	`featured` integer DEFAULT false,
+	`featured` integer DEFAULT false NOT NULL,
 	`shoot_id` text NOT NULL,
 	FOREIGN KEY (`shoot_id`) REFERENCES `shoots`(`id`) ON UPDATE no action ON DELETE cascade
 );

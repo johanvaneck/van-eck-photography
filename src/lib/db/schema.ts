@@ -90,7 +90,7 @@ export const shootsTable = sqliteTable("shoots", {
     .references(() => categoriesTable.id, { onDelete: "cascade" }), // optional
 });
 
-export const photosTable = sqliteTable("photos", {
+export const picturesTable = sqliteTable("pictures", {
   ...tableDefaults,
   s3Path: text("s3_path").notNull(),
   lowResS3Path: text("low_res_s3_path"),

@@ -4,7 +4,7 @@ export const routes = {
   dashboard: "/dashboard",
   shoots: "/shoots",
   shootsCreate: "/shoots/create",
-  photos: "/photos",
+  pictures: "/pictures",
   categories: "/categories",
   upgrade: "/upgrade",
   account: "/account",

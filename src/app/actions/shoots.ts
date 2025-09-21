@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
-import { shootsTable, photosTable } from "@/lib/db/schema";
+import { shootsTable, picturesTable } from "@/lib/db/schema";
 import { Result, tryCatch } from "@/lib/types/result";
 import { getS3Client } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
@@ -12,12 +12,12 @@ export async function getShoots() {
   return await tryCatch(db.select().from(shootsTable));
 }
 
-export async function createPhotoAction({ shootId, fileType }: { shootId: string, fileType: string }): Promise<Result<typeof photosTable.$inferSelect>> {
-  const photoId = "photo_" + nanoid();
+export async function createPictureAction({ shootId, fileType }: { shootId: string, fileType: string }): Promise<Result<typeof picturesTable.$inferSelect>> {
+  const pictureId = "picture_" + nanoid();
   const { data, error } = await tryCatch(
-    db.insert(photosTable)
+    db.insert(picturesTable)
       .values({
-        id: photoId,
+        id: pictureId,
         shootId,
         s3Path: "",
         lowResS3Path: "",
@@ -28,18 +28,18 @@ export async function createPhotoAction({ shootId, fileType }: { shootId: string
   if (error) {
     return { data: null, error };
   }
-  const [photo] = data;
-  return { data: photo, error: null };
+  const [picture] = data;
+  return { data: picture, error: null };
 }
 
-export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes }: { photoId: string, fileType: string, isLowRes?: boolean }): Promise<Result<string>> {
-  console.log("Getting presigned upload URL for:", { photoId, fileType, isLowRes });
+export async function getPresignedUploadUrlAction({ pictureId, fileType, isLowRes }: { pictureId: string, fileType: string, isLowRes?: boolean }): Promise<Result<string>> {
+  console.log("Getting presigned upload URL for:", { pictureId, fileType, isLowRes });
   const { data: s3Client, error: errorClient } = await getS3Client();
   if (errorClient) {
     console.error("Error getting S3 client:", errorClient);
     return { data: null, error: new Error("Error getting S3 client") };
   }
-  const s3Path = isLowRes ? `photos/${photoId}_lowres` : `photos/${photoId}`;
+  const s3Path = isLowRes ? `pictures/${pictureId}_lowres` : `pictures/${pictureId}`;
   const command = new PutObjectCommand({
     Bucket: "vep",
     Key: s3Path,
@@ -53,17 +53,17 @@ export async function getPresignedUploadUrlAction({ photoId, fileType, isLowRes 
   return { data: presignedUrl, error: null };
 }
 
-export async function updatePhotoS3PathAction({ photoId, lowResS3Path }: { photoId: string, lowResS3Path?: string }): Promise<Result<string>> {
-  const s3Path = `photos/${photoId}`;
-  const updateObj: Partial<typeof photosTable.$inferInsert> = { s3Path };
+export async function updatePictureS3PathAction({ pictureId, lowResS3Path }: { pictureId: string, lowResS3Path?: string }): Promise<Result<string>> {
+  const s3Path = `pictures/${pictureId}`;
+  const updateObj: Partial<typeof picturesTable.$inferInsert> = { s3Path };
   if (lowResS3Path) updateObj.lowResS3Path = lowResS3Path;
   const { error } = await tryCatch(
-    db.update(photosTable)
+    db.update(picturesTable)
       .set(updateObj)
-      .where(eq(photosTable.id, photoId))
+      .where(eq(picturesTable.id, pictureId))
   );
   if (error) {
     return { data: null, error };
   }
-  return { data: photoId, error: null };
+  return { data: pictureId, error: null };
 }

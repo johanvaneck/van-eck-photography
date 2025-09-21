@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { photosTable, shootsTable } from "@/lib/db/schema"
+import { picturesTable, shootsTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog"
 import { ShareButton } from "./components/share-button"
@@ -7,7 +7,7 @@ import { getS3Client } from "@/lib/s3"
 import { GalleryClient } from "./components/gallery-client"
 import { GetObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import { deletePhoto, markPhotoFeatured } from "@/app/actions/photos"
+import { deletePicture, markPictureFeatured } from "@/app/actions/pictures"
 
 export default async function Page({
   params,
@@ -23,10 +23,10 @@ export default async function Page({
     .where(eq(shootsTable.id, shootId));
   const shoot = shootArr[0];
 
-  const photos = await db
+  const pictures = await db
     .select()
-    .from(photosTable)
-    .where(eq(photosTable.shootId, shootId))
+    .from(picturesTable)
+    .where(eq(picturesTable.shootId, shootId))
 
   const { data: s3Client, error: errorS3Client } = await getS3Client()
   if (errorS3Client) {
@@ -35,13 +35,13 @@ export default async function Page({
   }
 
   // Generate presigned URLs for all images (low-res and high-res)
-  const presignedPhotos = await Promise.all(
-    photos.filter(p => !!p.s3Path).map(async (photo) => {
-      const lowResKey = photo.lowResS3Path || photo.s3Path
+  const presignedPictures = await Promise.all(
+    pictures.filter(p => !!p.s3Path).map(async (picture) => {
+      const lowResKey = picture.lowResS3Path || picture.s3Path
       const lowResUrl = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: "vep", Key: lowResKey }), { expiresIn: 60 * 60 })
-      const highResUrl = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: "vep", Key: photo.s3Path }), { expiresIn: 60 * 60 })
+      const highResUrl = await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: "vep", Key: picture.s3Path }), { expiresIn: 60 * 60 })
       return {
-        ...photo,
+        ...picture,
         lowResUrl,
         highResUrl,
       }
@@ -66,9 +66,9 @@ export default async function Page({
       </header>
       <main className="flex-1 w-full">
         <GalleryClient
-          photos={presignedPhotos}
-          markPhotoFeaturedAction={markPhotoFeatured}
-          deletePhotoAction={deletePhoto}
+          pictures={presignedPictures}
+          markPictureFeaturedAction={markPictureFeatured}
+          deletePictureAction={deletePicture}
         />
       </main>
     </div>

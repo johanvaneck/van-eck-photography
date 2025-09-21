@@ -1,5 +1,5 @@
 "use client";
-import { Photo } from "@/lib/db/types"
+import { Picture } from "@/lib/db/types"
 import {
 	Dialog,
 	DialogClose,
@@ -19,13 +19,13 @@ import { Result, tryCatch } from "@/lib/types/result"
 import { useRef, useState } from "react";
 
 export function ShootsUploadDialogClient({
-	createPhotoAction,
+	createPictureAction,
 	getPresignedUploadUrlAction,
-	updatePhotoS3PathAction,
+	updatePictureS3PathAction,
 }: {
-	createPhotoAction: (params: { fileType: string }) => Promise<Result<Photo>>,
-	getPresignedUploadUrlAction: (params: { photoId: string, fileType: string, isLowRes?: boolean }) => Promise<Result<string>>,
-	updatePhotoS3PathAction: (params: { photoId: string, lowResS3Path?: string }) => Promise<Result<string>>
+	createPictureAction: (params: { fileType: string }) => Promise<Result<Picture>>,
+	getPresignedUploadUrlAction: (params: { pictureId: string, fileType: string, isLowRes?: boolean }) => Promise<Result<string>>,
+	updatePictureS3PathAction: (params: { pictureId: string, lowResS3Path?: string }) => Promise<Result<string>>
 }) {
 	const fileCountRef = useRef(0);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,35 +65,35 @@ export function ShootsUploadDialogClient({
 	}
 
 	const handleSubmit = async (formData: FormData) => {
-		const photos = formData.getAll("photos");
-		fileCountRef.current = photos.length;
-		setStatus(s => ({ ...s, totalSteps: photos.length * 5, step: 0, files: photos.length, progress: 0, text: "Preparing upload...", type: "info" }));
-		for (const [i, file] of photos.entries()) {
+		const pictures = formData.getAll("pictures");
+		fileCountRef.current = pictures.length;
+		setStatus(s => ({ ...s, totalSteps: pictures.length * 5, step: 0, files: pictures.length, progress: 0, text: "Preparing upload...", type: "info" }));
+		for (const [i, file] of pictures.entries()) {
 			if (!(file instanceof File)) continue;
-			setStatus(s => ({ ...s, text: `Creating photo record (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			const { data: photo, error: photoError } = await createPhotoAction({ fileType: file.type });
-			if (photoError || !photo) {
-				setStatus(s => ({ ...s, text: "Error creating photo record", type: "error" }));
+			setStatus(s => ({ ...s, text: `Creating picture record (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
+			const { data: picture, error: pictureError } = await createPictureAction({ fileType: file.type });
+			if (pictureError || !picture) {
+				setStatus(s => ({ ...s, text: "Error creating picture record", type: "error" }));
 				return;
 			}
-			setStatus(s => ({ ...s, text: `Generating low-res image (${i + 1}/${photos.length})...`, step: s.step + 1 }));
+			setStatus(s => ({ ...s, text: `Generating low-res image (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
 			const { data: lowResFile, error: lowResError } = await tryCatch(generateLowResImage(file));
 			if (lowResError) {
 				setStatus(s => ({ ...s, text: "Error generating low-res image", type: "error" }));
 				return;
 			}
-			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
+			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
+			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ pictureId: picture.id, fileType: file.type });
 			if (presignedError) {
 				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
-			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
+			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ pictureId: picture.id, fileType: lowResFile.type, isLowRes: true });
 			if (lowResPresignedError) {
 				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
 				return;
 			}
-			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${photos.length})...`, step: s.step + 1 }));
+			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
 			try {
 				await fetch(presignedUrl, {
 					method: "PUT",
@@ -104,7 +104,7 @@ export function ShootsUploadDialogClient({
 				setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
 				return;
 			}
-			setStatus(s => ({ ...s, text: `Uploading low-res (${i + 1}/${photos.length})...`, step: s.step + 1 }));
+			setStatus(s => ({ ...s, text: `Uploading low-res (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
 			try {
 				await fetch(lowResPresignedUrl, {
 					method: "PUT",
@@ -115,15 +115,15 @@ export function ShootsUploadDialogClient({
 				setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
 				return;
 			}
-			setStatus(s => ({ ...s, text: `Updating database (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			const { error: updateError } = await updatePhotoS3PathAction({ photoId: photo.id, lowResS3Path: `photos/${photo.id}_lowres` });
+			setStatus(s => ({ ...s, text: `Updating database (${i + 1}/${pictures.length})...`, step: s.step + 1 }));
+			const { error: updateError } = await updatePictureS3PathAction({ pictureId: picture.id, lowResS3Path: `pictures/${picture.id}_lowres` });
 			if (updateError) {
 				setStatus(s => ({ ...s, text: "Error updating database", type: "error" }));
 				return;
 			}
 			setStatus(s => ({ ...s, progress: i + 1 }));
 		}
-		setStatus(s => ({ ...s, text: "Upload complete!", type: "success", progress: photos.length }));
+		setStatus(s => ({ ...s, text: "Upload complete!", type: "success", progress: pictures.length }));
 	}
 
 	function handleDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -148,7 +148,7 @@ export function ShootsUploadDialogClient({
 		}
 	}
 
-	// Calculate progress percentage based on photos uploaded
+	// Calculate progress percentage based on pictures uploaded
 	const progressPercent = status.files > 0 ? Math.min(Math.round((status.progress / status.files) * 100), 100) : 0;
 
 	return (
@@ -161,7 +161,7 @@ export function ShootsUploadDialogClient({
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-2xl p-10 rounded-2xl bg-background shadow-2xl max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle className="text-xl font-bold text-foreground">Upload Photos</DialogTitle>
+					<DialogTitle className="text-xl font-bold text-foreground">Upload Pictures</DialogTitle>
 					<DialogDescription className="text-muted-foreground">
 						Select or drag images to upload. Low-res previews will be generated automatically.
 					</DialogDescription>
@@ -177,14 +177,14 @@ export function ShootsUploadDialogClient({
 									style={{ width: `${progressPercent}%` }}
 								></div>
 							</div>
-							<div className="text-xs text-muted-foreground mt-1">{status.progress} of {status.files || 0} photos uploaded</div>
+							<div className="text-xs text-muted-foreground mt-1">{status.progress} of {status.files || 0} pictures uploaded</div>
 						</div>
 					</div>
 
 					<Form className="flex flex-col gap-8" action={handleSubmit}>
 						<div className="grid gap-6">
 							<div className="grid gap-3">
-								<Label htmlFor="photos" className="font-semibold text-foreground">Photos</Label>
+								<Label htmlFor="pictures" className="font-semibold text-foreground">Pictures</Label>
 								<div
 									className="border-2 border-dashed border-primary rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer bg-secondary/30 hover:bg-secondary transition-all w-full min-h-[160px]"
 									onDrop={handleDrop}
@@ -195,7 +195,7 @@ export function ShootsUploadDialogClient({
 								>
 									<span className="text-muted-foreground text-lg mb-2">Drag & drop files here</span>
 									<span className="text-xs text-muted-foreground mb-2">or click to select</span>
-									<Input ref={fileInputRef} type="file" name="photos" multiple className="hidden" onChange={handleFileChange} />
+									<Input ref={fileInputRef} type="file" name="pictures" multiple className="hidden" onChange={handleFileChange} />
 									{selectedFiles.length > 0 && (
 										<div className="mt-4 w-full max-h-40 overflow-y-auto">
 											<div className="text-sm font-medium text-foreground mb-2">Selected files ({selectedFiles.length}):</div>

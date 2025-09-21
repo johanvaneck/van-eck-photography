@@ -1,24 +1,24 @@
 import { ShootsUploadDialogClient } from "./shoots-upload-dialog-client";
-import { createPhotoAction as serverCreatePhotoAction, getPresignedUploadUrlAction as serverGetPresignedUploadUrlAction, updatePhotoS3PathAction as serverUpdatePhotoS3PathAction } from "@/app/actions/shoots";
+import { createPictureAction as serverCreatePictureAction, getPresignedUploadUrlAction as serverGetPresignedUploadUrlAction, updatePictureS3PathAction as serverUpdatePictureS3PathAction } from "@/app/actions/shoots";
 
 export function ShootsUploadDialog({ shootId }: { shootId: string }) {
-	async function createPhotoAction(params: { fileType: string }) {
+	async function createPictureAction(params: { fileType: string }) {
 		"use server";
-		return await serverCreatePhotoAction({ ...params, shootId });
+		return await serverCreatePictureAction({ ...params, shootId });
 	}
-	async function getPresignedUploadUrlAction(params: { photoId: string, fileType: string }) {
+	async function getPresignedUploadUrlAction(params: { pictureId: string, fileType: string }) {
 		"use server";
 		return await serverGetPresignedUploadUrlAction(params);
 	}
-	async function updatePhotoS3PathAction(params: { photoId: string }) {
+	async function updatePictureS3PathAction(params: { pictureId: string }) {
 		"use server";
-		return await serverUpdatePhotoS3PathAction(params);
+		return await serverUpdatePictureS3PathAction(params);
 	}
 	return (
 		<ShootsUploadDialogClient
-			createPhotoAction={createPhotoAction}
+			createPictureAction={createPictureAction}
 			getPresignedUploadUrlAction={getPresignedUploadUrlAction}
-			updatePhotoS3PathAction={updatePhotoS3PathAction}
+			updatePictureS3PathAction={updatePictureS3PathAction}
 		/>
 	);
 }
