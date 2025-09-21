@@ -50,12 +50,12 @@ export function ShootsUploadDialogClient({
 				canvas.height = Math.round(img.height * scale);
 				const ctx = canvas.getContext("2d");
 				ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-					canvas.toBlob(blob => {
-						if (!blob) {
-							return reject("Failed to create blob");
-						}
-						resolve(new File([blob], file.name.replace(/(\.[^.]+)?$/, "_lowres$1"), { type: "image/jpeg" }));
-					}, "image/jpeg", 0.7);
+				canvas.toBlob(blob => {
+					if (!blob) {
+						return reject("Failed to create blob");
+					}
+					resolve(new File([blob], file.name.replace(/(\.[^.]+)?$/, "_lowres$1"), { type: "image/jpeg" }));
+				}, "image/jpeg", 0.7);
 			};
 			img.onerror = (err) => {
 				reject(err);
@@ -94,27 +94,27 @@ export function ShootsUploadDialogClient({
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-				try {
-					await fetch(presignedUrl, {
-						method: "PUT",
-						headers: { "Content-Type": file.type },
-						body: file,
-					});
-				} catch {
-					setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
-					return;
-				}
+			try {
+				await fetch(presignedUrl, {
+					method: "PUT",
+					headers: { "Content-Type": file.type },
+					body: file,
+				});
+			} catch {
+				setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
+				return;
+			}
 			setStatus(s => ({ ...s, text: `Uploading low-res (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-				try {
-					await fetch(lowResPresignedUrl, {
-						method: "PUT",
-						headers: { "Content-Type": lowResFile.type },
-						body: lowResFile,
-					});
-				} catch {
-					setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
-					return;
-				}
+			try {
+				await fetch(lowResPresignedUrl, {
+					method: "PUT",
+					headers: { "Content-Type": lowResFile.type },
+					body: lowResFile,
+				});
+			} catch {
+				setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
+				return;
+			}
 			setStatus(s => ({ ...s, text: `Updating database (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { error: updateError } = await updatePhotoS3PathAction({ photoId: photo.id, lowResS3Path: `photos/${photo.id}_lowres` });
 			if (updateError) {
@@ -154,7 +154,10 @@ export function ShootsUploadDialogClient({
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button variant="default" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg shadow">Upload</Button>
+				<Button variant="default" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg shadow">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 inline-block"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 10l-4-4m0 0l-4 4m4-4v12" /></svg>
+					Upload
+				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-2xl p-10 rounded-2xl bg-background shadow-2xl max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
@@ -212,7 +215,10 @@ export function ShootsUploadDialogClient({
 							<DialogClose asChild>
 								<Button variant="outline" className="rounded-lg">Cancel</Button>
 							</DialogClose>
-							<FormButton text="Upload" className="bg-primary text-primary-foreground font-semibold rounded-lg px-6 py-2 shadow" />
+							<FormButton
+								text={<><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 inline-block"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 10l-4-4m0 0l-4 4m4-4v12" /></svg>Start</>}
+								className="bg-primary text-primary-foreground font-semibold rounded-lg px-6 py-2 shadow"
+							/>
 						</DialogFooter>
 					</Form>
 				</div>
