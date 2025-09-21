@@ -6,6 +6,15 @@ import { Shoot } from '@/lib/db/types';
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, getDate, parseISO } from 'date-fns';
 import MonthNav from './month-nav';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
+import { EditNameField } from './components/edit-name-field';
+import { EditTimeField } from './components/edit-time-field';
+import { EditLocationField } from './components/edit-location-field';
+import { EditDepositField } from './components/edit-deposit-field';
+import { EditStatusField } from './components/edit-status-field';
+import { EditPriceChargedField } from './components/edit-price-charged-field';
+import { EditNotesField } from './components/edit-notes-field';
+import { EditFullyPaidField } from './components/edit-fully-paid-field';
+import { updateShoot } from '@/app/actions/shoots';
 
 export default async function Page({ searchParams }: { searchParams?: { year?: string; month?: string } }) {
   const now = new Date();
@@ -44,16 +53,16 @@ export default async function Page({ searchParams }: { searchParams?: { year?: s
         <TableBody>
           {Object.entries(shootsByDay).map(([day, shoots]) => (
             shoots.map((shoot, idx) => (
-              <TableRow key={shoot.id}>
+              <TableRow className="h-16" key={shoot.id}>
                 <TableCell>{idx === 0 ? day : ''}</TableCell>
-                <TableCell>{shoot.name}</TableCell>
-                <TableCell>{shoot.time}</TableCell>
-                <TableCell>{shoot.location}</TableCell>
-                <TableCell>{shoot.deposit}</TableCell>
-                <TableCell>{shoot.fully_paid ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{shoot.status}</TableCell>
-                <TableCell>{shoot.price_charged}</TableCell>
-                <TableCell>{shoot.notes}</TableCell>
+                <TableCell><EditNameField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditTimeField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditLocationField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditDepositField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditFullyPaidField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditStatusField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditPriceChargedField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell><EditNotesField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
               </TableRow>
             ))
           ))}
