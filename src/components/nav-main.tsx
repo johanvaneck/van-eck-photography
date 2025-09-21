@@ -28,6 +28,10 @@ const items = [
         title: "Categories",
         url: routes.categories,
       },
+      {
+        title: "Featured",
+        url: routes.featured,
+      },
     ],
   },
 ];

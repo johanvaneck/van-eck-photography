@@ -6,6 +6,7 @@ export const routes = {
   shootsCreate: "/shoots/create",
   pictures: "/pictures",
   categories: "/categories",
+  featured: "/featured",
   upgrade: "/upgrade",
   account: "/account",
   billing: "/billing",
