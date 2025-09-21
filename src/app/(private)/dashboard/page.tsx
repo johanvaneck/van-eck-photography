@@ -13,11 +13,9 @@ import {
 import { EditNameField } from "./components/edit-name-field";
 import { EditTimeField } from "./components/edit-time-field";
 import { EditLocationField } from "./components/edit-location-field";
-import { EditDepositField } from "./components/edit-deposit-field";
 import { EditStatusField } from "./components/edit-status-field";
 import { EditPriceChargedField } from "./components/edit-price-charged-field";
 import { EditNotesField } from "./components/edit-notes-field";
-import { EditFullyPaidField } from "./components/edit-fully-paid-field";
 import { updateShoot } from "@/app/actions/shoots";
 
 export default async function Page({
@@ -57,8 +55,6 @@ export default async function Page({
             <TableHead>Name</TableHead>
             <TableHead>Time</TableHead>
             <TableHead>Location</TableHead>
-            <TableHead>Deposit</TableHead>
-            <TableHead>Fully Paid</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Price Charged</TableHead>
             <TableHead>Notes</TableHead>
@@ -83,18 +79,6 @@ export default async function Page({
                 </TableCell>
                 <TableCell>
                   <EditLocationField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
-                </TableCell>
-                <TableCell>
-                  <EditDepositField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
-                </TableCell>
-                <TableCell>
-                  <EditFullyPaidField
                     shoot={shoot}
                     updateShootAction={updateShoot}
                   />

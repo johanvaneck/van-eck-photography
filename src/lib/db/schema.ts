@@ -90,8 +90,6 @@ export const shootsTable = sqliteTable("shoots", {
   name: text("name").notNull(),
   time: text("time"),
   location: text("location"),
-  deposit: integer("deposit"),
-  fully_paid: integer("fully_paid", { mode: "boolean" }).default(false),
   status: text("status"),
   price_charged: integer("price_charged"),
   notes: text("notes"),

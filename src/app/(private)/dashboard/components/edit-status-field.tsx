@@ -2,34 +2,35 @@
 import { useState } from "react";
 import { Shoot } from "@/lib/db/types";
 import { updateShoot } from "@/app/actions/shoots";
-import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { ShootStatus } from "@/lib/enums";
 
 export function EditStatusField({
-  shoot,
-  updateShootAction,
+    shoot,
+    updateShootAction,
 }: {
-  shoot: Shoot;
-  updateShootAction: typeof updateShoot;
+    shoot: Shoot;
+    updateShootAction: typeof updateShoot;
 }) {
-  const [value, setValue] = useState(shoot.status || "");
+    const [value, setValue] = useState(shoot.status || ShootStatus.DepositPaid);
 
-  const handleBlur = async () => {
-    if (value !== shoot.status) {
-      await updateShootAction({ ...shoot, status: value });
-    }
-  };
-
-  return (
-    <Input
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={handleBlur}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          (e.target as HTMLInputElement).blur();
+    const handleBlur = async () => {
+        if (value !== shoot.status) {
+            await updateShootAction({ ...shoot, status: value });
         }
-      }}
-      style={{ width: "100%" }}
-    />
-  );
+    };
+
+    return (
+        <Select value={value} onValueChange={(val) => { setValue(val); handleBlur(); }}>
+            <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value={ShootStatus.Booked}>{ShootStatus.Booked}</SelectItem>
+                <SelectItem value={ShootStatus.DepositPaid}>{ShootStatus.DepositPaid}</SelectItem>
+                <SelectItem value={ShootStatus.FullyPaid}>{ShootStatus.FullyPaid}</SelectItem>
+                <SelectItem value={ShootStatus.GalleryDelivered}>{ShootStatus.GalleryDelivered}</SelectItem>
+            </SelectContent>
+        </Select>
+    );
 }
