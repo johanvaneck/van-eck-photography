@@ -4,7 +4,7 @@ import { shootsTable } from '@/lib/db/schema';
 import { and, gte, lt } from 'drizzle-orm';
 import { Shoot } from '@/lib/db/types';
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, getDate, parseISO } from 'date-fns';
-import MonthNav from './MonthNav';
+import MonthNav from './month-nav';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
 
 export default async function Page({ searchParams }: { searchParams?: { year?: string; month?: string } }) {
