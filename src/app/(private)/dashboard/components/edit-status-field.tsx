@@ -5,19 +5,16 @@ import { updateShoot } from "@/app/actions/shoots";
 import { Input } from "@/components/ui/input";
 
 export function EditStatusField({ shoot, updateShootAction }: { shoot: Shoot, updateShootAction: typeof updateShoot }) {
-  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(shoot.status || "");
 
   const handleBlur = async () => {
     if (value !== shoot.status) {
       await updateShootAction({ ...shoot, status: value });
     }
-    setEditing(false);
   };
 
-  return editing ? (
+  return (
     <Input
-      autoFocus
       value={value}
       onChange={e => setValue(e.target.value)}
       onBlur={handleBlur}
@@ -28,7 +25,5 @@ export function EditStatusField({ shoot, updateShootAction }: { shoot: Shoot, up
       }}
       style={{ width: "100%" }}
     />
-  ) : (
-    <span onDoubleClick={() => setEditing(true)}>{shoot.status}</span>
   );
 }

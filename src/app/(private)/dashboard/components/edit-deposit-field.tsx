@@ -5,19 +5,16 @@ import { updateShoot } from "@/app/actions/shoots";
 import { Input } from "@/components/ui/input";
 
 export function EditDepositField({ shoot, updateShootAction }: { shoot: Shoot, updateShootAction: typeof updateShoot }) {
-  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(shoot.deposit?.toString() || "");
 
   const handleBlur = async () => {
     if (value !== (shoot.deposit?.toString() || "")) {
       await updateShootAction({ ...shoot, deposit: value ? parseFloat(value) : undefined });
     }
-    setEditing(false);
   };
 
-  return editing ? (
+  return (
     <Input
-      autoFocus
       type="number"
       value={value}
       onChange={e => setValue(e.target.value)}
@@ -29,7 +26,5 @@ export function EditDepositField({ shoot, updateShootAction }: { shoot: Shoot, u
       }}
       style={{ width: "100%" }}
     />
-  ) : (
-    <span onDoubleClick={() => setEditing(true)}>{shoot.deposit}</span>
   );
 }

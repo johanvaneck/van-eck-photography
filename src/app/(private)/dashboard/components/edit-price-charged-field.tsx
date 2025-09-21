@@ -5,19 +5,16 @@ import { updateShoot } from "@/app/actions/shoots";
 import { Input } from "@/components/ui/input";
 
 export function EditPriceChargedField({ shoot, updateShootAction }: { shoot: Shoot, updateShootAction: typeof updateShoot }) {
-  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(shoot.price_charged?.toString() || "");
 
   const handleBlur = async () => {
     if (value !== (shoot.price_charged?.toString() || "")) {
       await updateShootAction({ ...shoot, price_charged: value ? parseFloat(value) : undefined });
     }
-    setEditing(false);
   };
 
-  return editing ? (
+  return (
     <Input
-      autoFocus
       type="number"
       value={value}
       onChange={e => setValue(e.target.value)}
@@ -29,7 +26,5 @@ export function EditPriceChargedField({ shoot, updateShootAction }: { shoot: Sho
       }}
       style={{ width: "100%" }}
     />
-  ) : (
-    <span onDoubleClick={() => setEditing(true)}>{shoot.price_charged}</span>
   );
 }
