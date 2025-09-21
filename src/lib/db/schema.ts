@@ -87,7 +87,7 @@ export const shootsTable = sqliteTable("shoots", {
   name: text("name").notNull(),
 
   categoryId: text("category_id")
-    .references(() => categoriesTable.id, { onDelete: "cascade" }),
+    .references(() => categoriesTable.id, { onDelete: "cascade" }), // optional
 });
 
 export const photosTable = sqliteTable("photos", {

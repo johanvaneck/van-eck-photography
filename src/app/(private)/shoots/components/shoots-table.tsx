@@ -35,7 +35,7 @@ export async function ShootsTable() {
               </Link>
             </TableCell>
             <TableCell>{shoot.name}</TableCell>
-            <TableCell>{shoot.categoryId}</TableCell>
+            <TableCell>{shoot.categoryId ?? "None"}</TableCell>
           </TableRow>
         ))}
       </TableBody>
