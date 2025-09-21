@@ -1,5 +1,5 @@
-import { FormButton } from "@/components/form-button"
-import { Button } from "@/components/ui/button"
+import { FormButton } from "@/components/form-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,26 +9,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { db } from "@/lib/db"
-import { categoriesTable } from "@/lib/db/schema"
-import { Category } from "@/lib/db/types"
-import { eq } from "drizzle-orm"
-import { EditIcon } from "lucide-react"
-import { revalidatePath } from "next/cache"
-import Form from "next/form"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { db } from "@/lib/db";
+import { categoriesTable } from "@/lib/db/schema";
+import { Category } from "@/lib/db/types";
+import { eq } from "drizzle-orm";
+import { EditIcon } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import Form from "next/form";
 
 export function EditCategoryDialog({ category }: { category: Category }) {
   const handleSubmit = async (formData: FormData) => {
     "use server";
-    const nameForm = formData.get("name")
+    const nameForm = formData.get("name");
     if (!nameForm) {
-      console.error("Name is required")
-      return
+      console.error("Name is required");
+      return;
     }
-    const name = nameForm.toString()
+    const name = nameForm.toString();
     await db
       .update(categoriesTable)
       .set({
@@ -36,12 +36,14 @@ export function EditCategoryDialog({ category }: { category: Category }) {
       })
       .where(eq(categoriesTable.id, category.id));
 
-    revalidatePath("/categories")
-  }
+    revalidatePath("/categories");
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline"><EditIcon /> Edit</Button>
+        <Button variant="outline">
+          <EditIcon /> Edit
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -66,5 +68,5 @@ export function EditCategoryDialog({ category }: { category: Category }) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

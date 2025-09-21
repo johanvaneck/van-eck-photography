@@ -1,5 +1,5 @@
-import { FormButton } from "@/components/form-button"
-import { Button } from "@/components/ui/button"
+import { FormButton } from "@/components/form-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,38 +9,38 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { db } from "@/lib/db"
-import { categoriesTable } from "@/lib/db/schema"
-import { PlusIcon } from "lucide-react"
-import { nanoid } from "nanoid"
-import { revalidatePath } from "next/cache"
-import Form from "next/form"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { db } from "@/lib/db";
+import { categoriesTable } from "@/lib/db/schema";
+import { PlusIcon } from "lucide-react";
+import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
+import Form from "next/form";
 
 export function AddCategoryDialog() {
   const handleSubmit = async (formData: FormData) => {
     "use server";
-    const id = "category_" + nanoid()
-    const nameForm = formData.get("name")
+    const id = "category_" + nanoid();
+    const nameForm = formData.get("name");
     if (!nameForm) {
-      console.error("Name is required")
-      return
+      console.error("Name is required");
+      return;
     }
-    const name = nameForm.toString()
-    await db
-      .insert(categoriesTable)
-      .values({
-        id,
-        name,
-      })
-    revalidatePath("/categories")
-  }
+    const name = nameForm.toString();
+    await db.insert(categoriesTable).values({
+      id,
+      name,
+    });
+    revalidatePath("/categories");
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button><PlusIcon /> Add</Button>
+        <Button>
+          <PlusIcon /> Add
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -65,5 +65,5 @@ export function AddCategoryDialog() {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

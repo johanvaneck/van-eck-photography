@@ -14,9 +14,9 @@ export async function tryCatch<T>(
   promise: Promise<T>,
   options?: {
     onSuccess?: (data: T) => void;
-    onError: (error: Error) => T,
-    onFinally?: () => void
-  }
+    onError: (error: Error) => T;
+    onFinally?: () => void;
+  },
 ): Promise<Result<T>> {
   try {
     const data = await promise;

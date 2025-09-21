@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeCheck,
@@ -7,13 +7,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,27 +18,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-import { routes } from "@/lib/routes"
+import { routes } from "@/lib/routes";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar?: string
-  }
+    name: string;
+    email: string;
+    avatar?: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -55,7 +51,12 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{user.name.split(" ").map((item) => item[0].toUpperCase()).join("")}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {user.name
+                    .split(" ")
+                    .map((item) => item[0].toUpperCase())
+                    .join("")}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -85,7 +86,10 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <a href={routes.upgrade} className="flex items-center gap-2 w-full">
+                <a
+                  href={routes.upgrade}
+                  className="flex items-center gap-2 w-full"
+                >
                   <Sparkles />
                   Upgrade to Pro
                 </a>
@@ -94,19 +98,28 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <a href={routes.account} className="flex items-center gap-2 w-full">
+                <a
+                  href={routes.account}
+                  className="flex items-center gap-2 w-full"
+                >
                   <BadgeCheck />
                   Account
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href={routes.billing} className="flex items-center gap-2 w-full">
+                <a
+                  href={routes.billing}
+                  className="flex items-center gap-2 w-full"
+                >
                   <CreditCard />
                   Billing
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href={routes.notifications} className="flex items-center gap-2 w-full">
+                <a
+                  href={routes.notifications}
+                  className="flex items-center gap-2 w-full"
+                >
                   <Bell />
                   Notifications
                 </a>
@@ -115,7 +128,10 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href={routes.signOut} className="flex items-center gap-2 w-full">
+                <a
+                  href={routes.signOut}
+                  className="flex items-center gap-2 w-full"
+                >
                   <LogOut />
                   Log out
                 </a>
@@ -125,5 +141,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 
 import {
   Select,
@@ -8,14 +8,14 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { getCategories } from "@/app/actions/categories"
+} from "@/components/ui/select";
+import { getCategories } from "@/app/actions/categories";
 
 export async function CategorySelect() {
-  const { data, error } = await getCategories()
+  const { data, error } = await getCategories();
   if (error) {
-    console.error(error)
-    return <div>Error: {error.message}</div>
+    console.error(error);
+    return <div>Error: {error.message}</div>;
   }
   return (
     <Select>
@@ -33,5 +33,5 @@ export async function CategorySelect() {
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
+  );
 }

@@ -5,5 +5,5 @@ export default function Page() {
     <div className="flex justify-center items-center min-h-svh w-full">
       <LoginForm className="sm:w-sm md:w-md" type="sign-in" />
     </div>
-  )
+  );
 }

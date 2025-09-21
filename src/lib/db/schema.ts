@@ -1,8 +1,4 @@
-import {
-  sqliteTable,
-  text,
-  integer,
-} from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 // Better Auth Schema - START
 export const user = sqliteTable("user", {
@@ -44,8 +40,12 @@ export const account = sqliteTable("account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: integer("access_token_expires_at", { mode: "timestamp" }),
-  refreshTokenExpiresAt: integer("refresh_token_expires_at", { mode: "timestamp" }),
+  accessTokenExpiresAt: integer("access_token_expires_at", {
+    mode: "timestamp",
+  }),
+  refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+    mode: "timestamp",
+  }),
   scope: text("scope"),
   password: text("password"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
@@ -73,7 +73,7 @@ const tableDefaults = {
     .$defaultFn(() => /* @__PURE__ */ new Date()),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => /* @__PURE__ */ new Date()),
   // .$onUpdateFn(() => /* @__PURE__ */ new Date()), TODO: Find a way to do this in sqlite
 };
 
@@ -93,8 +93,9 @@ export const shootsTable = sqliteTable("shoots", {
   price_charged: integer("price_charged"),
   notes: text("notes"),
 
-  categoryId: text("category_id")
-    .references(() => categoriesTable.id, { onDelete: "cascade" }), // optional
+  categoryId: text("category_id").references(() => categoriesTable.id, {
+    onDelete: "cascade",
+  }), // optional
 });
 
 export const picturesTable = sqliteTable("pictures", {
@@ -107,5 +108,3 @@ export const picturesTable = sqliteTable("pictures", {
     .notNull()
     .references(() => shootsTable.id, { onDelete: "cascade" }),
 });
-
-

@@ -6,5 +6,5 @@ export default async function Page() {
     <Suspense fallback={<div>Loading...</div>}>
       <ShootsTable />
     </Suspense>
-  )
+  );
 }

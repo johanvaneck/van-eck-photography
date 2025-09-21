@@ -5,13 +5,13 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'van-eck-photography.s3.eu-north-1.amazonaws.com',
-        port: '', // Usually empty for S3
-        pathname: '**', // Adjust pathname as needed, use ** for wildcard
+        protocol: "https",
+        hostname: "van-eck-photography.s3.eu-north-1.amazonaws.com",
+        port: "", // Usually empty for S3
+        pathname: "**", // Adjust pathname as needed, use ** for wildcard
       },
-    ]
-  }
+    ],
+  },
 };
 
 export default nextConfig;

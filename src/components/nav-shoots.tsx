@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Camera,
@@ -7,7 +7,7 @@ import {
   MoreHorizontal,
   PlusIcon,
   Trash2,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,26 +24,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { Shoot } from "@/lib/db/types"
-import { routes } from "@/lib/routes"
+} from "@/components/ui/sidebar";
+import { Shoot } from "@/lib/db/types";
+import { routes } from "@/lib/routes";
 
-export function NavShoots({
-  shoots,
-}: {
-  shoots: Array<Shoot>;
-}) {
-  const { isMobile } = useSidebar()
+export function NavShoots({ shoots }: { shoots: Array<Shoot> }) {
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Shoots</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton
-            className="text-sidebar-foreground/70"
-            asChild
-          >
+          <SidebarMenuButton className="text-sidebar-foreground/70" asChild>
             <a href={routes.shootsCreate}>
               <PlusIcon className="text-sidebar-foreground/70" />
               <span>Create Shoot</span>
@@ -88,10 +81,7 @@ export function NavShoots({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton
-            className="text-sidebar-foreground/70"
-            asChild
-          >
+          <SidebarMenuButton className="text-sidebar-foreground/70" asChild>
             <a href={routes.shoots}>
               <MoreHorizontal className="text-sidebar-foreground/70" />
               <span>More</span>
@@ -100,5 +90,5 @@ export function NavShoots({
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

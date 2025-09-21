@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -14,9 +14,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
-import { routes } from "@/lib/routes"
-import { ChevronRight, SquareTerminal } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { routes } from "@/lib/routes";
+import { ChevronRight, SquareTerminal } from "lucide-react";
 
 const items = [
   {
@@ -30,7 +30,7 @@ const items = [
       },
     ],
   },
-]
+];
 
 export function NavMain() {
   return (
@@ -70,5 +70,5 @@ export function NavMain() {
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

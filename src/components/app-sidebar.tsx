@@ -1,20 +1,22 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavShoots } from "@/components/nav-shoots"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavShoots } from "@/components/nav-shoots";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Shoot } from "@/lib/db/types"
+} from "@/components/ui/sidebar";
+import { Shoot } from "@/lib/db/types";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar> & {
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
   user: {
     name: string;
     email: string;
@@ -31,9 +33,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar> & 
         <NavShoots shoots={props.shoots} />
         <NavMain />
       </SidebarContent>
-      <SidebarFooter>
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

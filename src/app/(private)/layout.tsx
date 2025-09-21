@@ -1,38 +1,42 @@
 import { auth } from "../../lib/auth"; // path to your Better Auth server instance
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { routes } from "@/lib/routes";
 import { db } from "@/lib/db";
 import { shootsTable } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const session = await auth.api.getSession({
-    headers: await headers() // you need to pass the headers object.
-  })
-  const user = session?.user
+    headers: await headers(), // you need to pass the headers object.
+  });
+  const user = session?.user;
   if (!user) {
-    return redirect("/auth/sign-in")
+    return redirect("/auth/sign-in");
   }
 
   const shoots = await db
     .select()
     .from(shootsTable)
     .orderBy(desc(shootsTable.updatedAt))
-    .limit(5)
+    .limit(5);
 
   return (
     <SidebarProvider>
@@ -54,9 +58,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href={routes.dashboard}>
-                    Home
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href={routes.dashboard}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 {/*
                 <BreadcrumbSeparator className="hidden md:block" />
@@ -68,11 +70,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Breadcrumb>
           </div>
         </header>
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
-

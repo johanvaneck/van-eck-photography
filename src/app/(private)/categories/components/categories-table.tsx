@@ -1,4 +1,4 @@
-import { getCategories } from "@/app/actions/categories"
+import { getCategories } from "@/app/actions/categories";
 import {
   Table,
   TableBody,
@@ -6,15 +6,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { AddCategoryDialog } from "./add-category-dialog"
-import { EditCategoryDialog } from "./edit-category-dialog"
+} from "@/components/ui/table";
+import { AddCategoryDialog } from "./add-category-dialog";
+import { EditCategoryDialog } from "./edit-category-dialog";
 
 export async function CategoriesTable() {
-  const { data, error } = await getCategories()
+  const { data, error } = await getCategories();
   if (error) {
-    console.error(error)
-    return <div>Error: {error.message}</div>
+    console.error(error);
+    return <div>Error: {error.message}</div>;
   }
   return (
     <Table>
@@ -39,5 +39,5 @@ export async function CategoriesTable() {
         ))}
       </TableBody>
     </Table>
-  )
+  );
 }

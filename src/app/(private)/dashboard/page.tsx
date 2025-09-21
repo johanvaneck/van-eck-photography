@@ -1,37 +1,69 @@
+import { db } from "@/lib/db";
+import { shootsTable } from "@/lib/db/schema";
+import { and, gte, lt } from "drizzle-orm";
+import { Shoot } from "@/lib/db/types";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  addMonths,
+  subMonths,
+  getDate,
+  parseISO,
+} from "date-fns";
+import MonthNav from "./month-nav";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+import { EditNameField } from "./components/edit-name-field";
+import { EditTimeField } from "./components/edit-time-field";
+import { EditLocationField } from "./components/edit-location-field";
+import { EditDepositField } from "./components/edit-deposit-field";
+import { EditStatusField } from "./components/edit-status-field";
+import { EditPriceChargedField } from "./components/edit-price-charged-field";
+import { EditNotesField } from "./components/edit-notes-field";
+import { EditFullyPaidField } from "./components/edit-fully-paid-field";
+import { updateShoot } from "@/app/actions/shoots";
 
-import { db } from '@/lib/db';
-import { shootsTable } from '@/lib/db/schema';
-import { and, gte, lt } from 'drizzle-orm';
-import { Shoot } from '@/lib/db/types';
-import { format, startOfMonth, endOfMonth, addMonths, subMonths, getDate, parseISO } from 'date-fns';
-import MonthNav from './month-nav';
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/table';
-import { EditNameField } from './components/edit-name-field';
-import { EditTimeField } from './components/edit-time-field';
-import { EditLocationField } from './components/edit-location-field';
-import { EditDepositField } from './components/edit-deposit-field';
-import { EditStatusField } from './components/edit-status-field';
-import { EditPriceChargedField } from './components/edit-price-charged-field';
-import { EditNotesField } from './components/edit-notes-field';
-import { EditFullyPaidField } from './components/edit-fully-paid-field';
-import { updateShoot } from '@/app/actions/shoots';
-
-export default async function Page({ searchParams }: { searchParams?: { year?: string; month?: string } }) {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { year?: string; month?: string };
+}) {
   const now = new Date();
-  const year = searchParams?.year ? parseInt(searchParams.year) : now.getFullYear();
-  const month = searchParams?.month ? parseInt(searchParams.month) : now.getMonth();
+  const year = searchParams?.year
+    ? parseInt(searchParams.year)
+    : now.getFullYear();
+  const month = searchParams?.month
+    ? parseInt(searchParams.month)
+    : now.getMonth();
   const start = startOfMonth(new Date(year, month, 1));
   const end = endOfMonth(start);
-  const shoots: Shoot[] = await db.select().from(shootsTable)
-    .where(and(gte(shootsTable.time, format(start, 'yyyy-MM-dd')), lt(shootsTable.time, format(addMonths(end, 1), 'yyyy-MM-dd'))));
+  const shoots: Shoot[] = await db
+    .select()
+    .from(shootsTable)
+    .where(
+      and(
+        gte(shootsTable.time, format(start, "yyyy-MM-dd")),
+        lt(shootsTable.time, format(addMonths(end, 1), "yyyy-MM-dd")),
+      ),
+    );
 
   // Group shoots by day
-  const shootsByDay = shoots.reduce((acc, shoot) => {
-    const day = shoot.time ? getDate(parseISO(shoot.time)) : '';
-    if (!acc[day]) acc[day] = [];
-    acc[day].push(shoot);
-    return acc;
-  }, {} as Record<string, Shoot[]>);
+  const shootsByDay = shoots.reduce(
+    (acc, shoot) => {
+      const day = shoot.time ? getDate(parseISO(shoot.time)) : "";
+      if (!acc[day]) acc[day] = [];
+      acc[day].push(shoot);
+      return acc;
+    },
+    {} as Record<string, Shoot[]>,
+  );
 
   return (
     <div>
@@ -51,21 +83,61 @@ export default async function Page({ searchParams }: { searchParams?: { year?: s
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Object.entries(shootsByDay).map(([day, shoots]) => (
+          {Object.entries(shootsByDay).map(([day, shoots]) =>
             shoots.map((shoot, idx) => (
               <TableRow className="h-16" key={shoot.id}>
-                <TableCell>{idx === 0 ? day : ''}</TableCell>
-                <TableCell><EditNameField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditTimeField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditLocationField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditDepositField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditFullyPaidField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditStatusField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditPriceChargedField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
-                <TableCell><EditNotesField shoot={shoot} updateShootAction={updateShoot} /></TableCell>
+                <TableCell>{idx === 0 ? day : ""}</TableCell>
+                <TableCell>
+                  <EditNameField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditTimeField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditLocationField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditDepositField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditFullyPaidField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditStatusField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditPriceChargedField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
+                <TableCell>
+                  <EditNotesField
+                    shoot={shoot}
+                    updateShootAction={updateShoot}
+                  />
+                </TableCell>
               </TableRow>
-            ))
-          ))}
+            )),
+          )}
         </TableBody>
       </Table>
     </div>

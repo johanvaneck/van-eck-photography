@@ -1,4 +1,4 @@
-import { getShoots } from "@/app/actions/shoots"
+import { getShoots } from "@/app/actions/shoots";
 import {
   Table,
   TableBody,
@@ -6,16 +6,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { routes } from "@/lib/routes"
-import Link from "next/link"
-
+} from "@/components/ui/table";
+import { routes } from "@/lib/routes";
+import Link from "next/link";
 
 export async function ShootsTable() {
-  const { data, error } = await getShoots()
+  const { data, error } = await getShoots();
   if (error) {
-    console.error(error)
-    return <div>Error: {error.message}</div>
+    console.error(error);
+    return <div>Error: {error.message}</div>;
   }
   return (
     <Table>
@@ -28,9 +27,12 @@ export async function ShootsTable() {
       </TableHeader>
       <TableBody>
         {data.map((shoot) => (
-          <TableRow key={shoot.id} >
+          <TableRow key={shoot.id}>
             <TableCell>
-              <Link className="cursor-pointer" href={`${routes.shoots}/${shoot.id}`}>
+              <Link
+                className="cursor-pointer"
+                href={`${routes.shoots}/${shoot.id}`}
+              >
                 {shoot.id}
               </Link>
             </TableCell>
@@ -40,5 +42,5 @@ export async function ShootsTable() {
         ))}
       </TableBody>
     </Table>
-  )
+  );
 }
