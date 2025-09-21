@@ -2,6 +2,8 @@ import { db } from "@/lib/db"
 import { picturesTable, shootsTable } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ShootsUploadDialog } from "./components/shoots-upload-dialog"
+import { EditShootDialog } from "./components/edit-shoot-dialog"
+import { updateShoot } from "@/app/actions/shoots"
 import { ShareButton } from "./components/share-button"
 import { getS3Client } from "@/lib/s3"
 import { GalleryClient } from "./components/gallery-client"
@@ -48,20 +50,17 @@ export default async function Page({
     })
   )
 
-  // Format shoot time
-  const shootTime = shoot?.createdAt ? new Date(shoot.createdAt).toLocaleString() : null;
-
   return (
     <div className="flex flex-col min-h-screen bg-background rounded">
       <header className="flex flex-col items-center justify-center py-8 gap-2 border-b border-border bg-card shadow rounded mb-4 overflow-x-hidden">
         <h1 className="text-3xl font-bold mb-2 text-foreground rounded">{shoot?.name || "Shoot"}</h1>
         <div className="flex flex-row items-center gap-4 text-sm text-muted-foreground rounded py-1">
-          <span>ID: {shootId}</span>
-          {shootTime && <span>• {shootTime}</span>}
+          {shootId}
         </div>
         <div className="flex flex-row gap-2 mt-2">
           <ShootsUploadDialog shootId={shootId} />
           <ShareButton shootId={shootId} />
+          <EditShootDialog shoot={shoot} updateShootAction={updateShoot} />
         </div>
       </header>
       <main className="flex-1 w-full">

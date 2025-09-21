@@ -7,6 +7,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { CreateShoot } from "@/lib/db/types";
+import { revalidatePath } from "next/cache";
 
 export async function getShoots() {
   return await tryCatch(db.select().from(shootsTable));
@@ -66,4 +68,15 @@ export async function updatePictureS3PathAction({ pictureId, lowResS3Path }: { p
     return { data: null, error };
   }
   return { data: pictureId, error: null };
+}
+
+export async function updateShoot(shoot: CreateShoot) {
+  const result = await tryCatch(
+    db.update(shootsTable)
+      .set(shoot)
+      .where(eq(shootsTable.id, shoot.id))
+      .returning()
+  )
+  revalidatePath(`/shoots/${shoot.id}`);
+  return result;
 }
