@@ -47,16 +47,16 @@ export default async function PublicGalleryPage({ params }: { params: Promise<{ 
                 <span className="text-sm text-gray-500">Shoot ID: {shootId}</span>
             </header>
             <main className="flex-1 w-full px-2 sm:px-4 md:px-8">
-                <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-2">
+                <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-2">
                     {presignedPictures.map((picture) => (
                         <div
                             key={picture.id}
-                            className="mb-2 break-inside-avoid rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden group relative"
+                            className="mb-2 break-inside-avoid rounded-sm bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden group relative"
                         >
                             <Image
                                 src={picture.lowResUrl}
                                 alt={picture.id}
-                                className="w-full h-auto object-cover rounded-lg"
+                                className="w-full h-auto object-cover rounded-sm"
                                 width={300}
                                 height={200}
                                 unoptimized
