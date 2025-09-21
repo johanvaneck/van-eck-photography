@@ -1,6 +1,7 @@
 import { getShootsByMonth } from "@/app/actions/shoots";
 import { Shoot } from "@/lib/db/types";
 import { startOfMonth, endOfMonth, getDate, parseISO } from "date-fns";
+import { format } from "date-fns";
 import MonthNav from "./month-nav";
 import {
   Table,
@@ -37,13 +38,18 @@ export default async function Page({
   // Group shoots by day
   const shootsByDay = shoots.reduce(
     (acc, shoot) => {
-      const day = shoot.time ? getDate(parseISO(shoot.time)) : "";
-      if (!acc[day]) acc[day] = [];
-      acc[day].push(shoot);
+      const day = shoot.time ? getDate(parseISO(shoot.time)) : null;
+      if (day) {
+        if (!acc[day]) acc[day] = [];
+        acc[day].push(shoot);
+      }
       return acc;
     },
-    {} as Record<string, Shoot[]>,
+    {} as Record<number, Shoot[]>,
   );
+
+  // Get all days in the month
+  const daysInMonth = Array.from({ length: end.getDate() }, (_, i) => i + 1);
 
   return (
     <div>
@@ -52,6 +58,7 @@ export default async function Page({
         <TableHeader>
           <TableRow>
             <TableHead>Day</TableHead>
+            <TableHead>Weekday</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Time</TableHead>
             <TableHead>Location</TableHead>
@@ -61,49 +68,44 @@ export default async function Page({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Object.entries(shootsByDay).map(([day, shoots]) =>
-            shoots.map((shoot, idx) => (
-              <TableRow className="h-16" key={shoot.id}>
+          {daysInMonth.map((day) => {
+            const dateObj = new Date(year, month, day);
+            const weekday = format(dateObj, "EEEE");
+            const shoots = shootsByDay[day] || [];
+            if (shoots.length === 0) {
+              return (
+                <TableRow className="h-16" key={`empty-${day}`}>
+                  <TableCell>{day}</TableCell>
+                  <TableCell>{weekday}</TableCell>
+                  <TableCell colSpan={6} className="text-muted-foreground text-center">No shoots</TableCell>
+                </TableRow>
+              );
+            }
+            return shoots.map((shoot, idx) => (
+              <TableRow key={shoot.id}>
                 <TableCell>{idx === 0 ? day : ""}</TableCell>
+                <TableCell>{idx === 0 ? weekday : ""}</TableCell>
                 <TableCell>
-                  <EditNameField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditNameField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
                 <TableCell>
-                  <EditTimeField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditTimeField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
                 <TableCell>
-                  <EditLocationField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditLocationField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
                 <TableCell>
-                  <EditStatusField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditStatusField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
                 <TableCell>
-                  <EditPriceChargedField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditPriceChargedField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
                 <TableCell>
-                  <EditNotesField
-                    shoot={shoot}
-                    updateShootAction={updateShoot}
-                  />
+                  <EditNotesField shoot={shoot} updateShootAction={updateShoot} />
                 </TableCell>
               </TableRow>
-            )),
-          )}
+            ));
+          })}
         </TableBody>
       </Table>
     </div>

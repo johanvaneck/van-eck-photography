@@ -7,33 +7,76 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { CategorySelect } from "./category-select";
+// Removed useSearchParams, will use searchParams from props
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { ShootStatus } from "@/lib/enums";
 
-export default function Page() {
+export default async function Page({ searchParams }: { searchParams?: Promise<Record<string, string>> }) {
+  const params = searchParams ? await searchParams : {};
+  const defaultName = params.name || "";
+  const defaultTime = params.time || "";
+  const defaultLocation = params.location || "";
+  const defaultStatus = params.status || ShootStatus.Booked;
+  const defaultPriceCharged = params.price_charged || "";
+  const defaultNotes = params.notes || "";
+  const defaultCategoryId = params.category_id || "";
+
   const handleSubmit = async (formData: FormData) => {
     "use server";
-    const nameInput = formData.get("name");
-    if (!nameInput) {
-      alert("Please enter a name");
-      return;
-    }
-    const name = nameInput.toString();
+    const name = formData.get("name")?.toString() || "";
+    const time = formData.get("time")?.toString() || undefined;
+    const location = formData.get("location")?.toString() || undefined;
+    const status = formData.get("status")?.toString() || undefined;
+    const price_charged = formData.get("price_charged") ? parseInt(formData.get("price_charged") as string) : undefined;
+    const notes = formData.get("notes")?.toString() || undefined;
+    const categoryId = formData.get("category_id")?.toString() || undefined;
     const session = await auth.api.getSession({ headers: await headers() });
     const userId = session?.user?.id;
     if (!userId) {
       alert("Please sign in");
       return;
     }
-    await createShoot({ name, userId });
+    await createShoot({ name, time, location, status, price_charged, notes, userId, categoryId });
   };
 
   return (
-    <Form className="flex flex-col gap-4 max-w-md" action={handleSubmit}>
-      <Label>Name</Label>
-      <Input name="name" required />
-      <Suspense fallback={<div>Loading...</div>}>
-        <CategorySelect />
-      </Suspense>
-      <FormButton text="Create Shoot" />
-    </Form>
+    <div className="flex items-center justify-center">
+      <Form className="flex flex-col gap-6 p-8 rounded-lg shadow-lg bg-card w-full max-w-md" action={handleSubmit}>
+        <Label htmlFor="name">Name</Label>
+        <Input name="name" id="name" required defaultValue={defaultName} />
+
+        <Label htmlFor="time">Time</Label>
+        <Input name="time" id="time" type="datetime-local" defaultValue={defaultTime} />
+
+        <Label htmlFor="location">Location</Label>
+        <Input name="location" id="location" defaultValue={defaultLocation} />
+
+        <Label htmlFor="status">Status</Label>
+        <Select name="status" defaultValue={defaultStatus}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ShootStatus.Booked}>{ShootStatus.Booked}</SelectItem>
+            <SelectItem value={ShootStatus.DepositPaid}>{ShootStatus.DepositPaid}</SelectItem>
+            <SelectItem value={ShootStatus.FullyPaid}>{ShootStatus.FullyPaid}</SelectItem>
+            <SelectItem value={ShootStatus.GalleryDelivered}>{ShootStatus.GalleryDelivered}</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Label htmlFor="price_charged">Price Charged</Label>
+        <Input name="price_charged" id="price_charged" type="number" defaultValue={defaultPriceCharged} />
+
+        <Label htmlFor="notes">Notes</Label>
+        <Input name="notes" id="notes" defaultValue={defaultNotes} />
+
+        <Label htmlFor="category_id">Category</Label>
+        <Suspense fallback={<div>Loading...</div>}>
+          <CategorySelect defaultValue={defaultCategoryId} />
+        </Suspense>
+
+        <FormButton text="Create Shoot" />
+      </Form>
+    </div>
   );
 }

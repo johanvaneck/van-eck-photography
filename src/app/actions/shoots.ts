@@ -19,14 +19,24 @@ export async function createShoot({
   name,
   userId,
   categoryId,
+  time,
+  location,
+  status,
+  price_charged,
+  notes,
 }: {
   name: string;
   userId: string;
   categoryId?: string;
+  time?: string;
+  location?: string;
+  status?: string;
+  price_charged?: number;
+  notes?: string;
 }) {
   const id = "shoot_" + nanoid();
   const result = await tryCatch(
-    db.insert(shootsTable).values({ id, name, userId, categoryId }),
+    db.insert(shootsTable).values({ id, name, userId, categoryId, time, location, status, price_charged, notes }),
   );
   revalidatePath(`/shoots/${id}`);
   return result;

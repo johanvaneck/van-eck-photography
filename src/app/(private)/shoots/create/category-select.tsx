@@ -5,15 +5,13 @@ import { headers } from "next/headers";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { getCategories } from "@/app/actions/categories";
 
-export async function CategorySelect() {
+export async function CategorySelect({ defaultValue }: { defaultValue?: string }) {
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
   if (!userId) {
@@ -25,19 +23,16 @@ export async function CategorySelect() {
     return <div>Error: {error.message}</div>;
   }
   return (
-    <Select>
+    <Select defaultValue={defaultValue} name="category_id">
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Category" />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Categories</SelectLabel>
-          {data.map((category) => (
-            <SelectItem key={category.id} value={category.id}>
-              {category.name}
-            </SelectItem>
-          ))}
-        </SelectGroup>
+        {data.map((category) => (
+          <SelectItem key={category.id} value={category.id}>
+            {category.name}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
