@@ -22,16 +22,6 @@ CREATE TABLE `categories` (
 	`name` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `photo_chunks` (
-	`id` text PRIMARY KEY NOT NULL,
-	`created_at` integer NOT NULL,
-	`updated_at` integer NOT NULL,
-	`photo_id` text NOT NULL,
-	`chunk_index` integer NOT NULL,
-	`chunk` blob NOT NULL,
-	FOREIGN KEY (`photo_id`) REFERENCES `photos`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
 CREATE TABLE `photos` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer NOT NULL,

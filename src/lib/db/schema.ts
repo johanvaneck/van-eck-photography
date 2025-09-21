@@ -2,7 +2,6 @@ import {
   sqliteTable,
   text,
   integer,
-  blob,
 } from "drizzle-orm/sqlite-core";
 
 // Better Auth Schema - START
@@ -102,11 +101,4 @@ export const photosTable = sqliteTable("photos", {
     .references(() => shootsTable.id, { onDelete: "cascade" }),
 });
 
-export const photoChunksTable = sqliteTable("photo_chunks", {
-  ...tableDefaults,
-  photoId: text("photo_id")
-    .notNull()
-    .references(() => photosTable.id, { onDelete: "cascade" }),
-  chunkIndex: integer("chunk_index").notNull(),
-  chunk: blob("chunk").notNull(),
-});
+
