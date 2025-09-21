@@ -38,7 +38,6 @@ export function ShootsUploadDialogClient({
 		progress: 0,
 		files: 0,
 	});
-	console.log('[ShootsUploadDialogClient] Rendered');
 
 	async function generateLowResImage(file: File): Promise<File> {
 		return new Promise((resolve, reject) => {
@@ -51,17 +50,14 @@ export function ShootsUploadDialogClient({
 				canvas.height = Math.round(img.height * scale);
 				const ctx = canvas.getContext("2d");
 				ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-				canvas.toBlob(blob => {
-					if (!blob) {
-						console.error('[ShootsUploadDialogClient] Failed to create low-res blob');
-						return reject("Failed to create blob");
-					}
-					console.log('[ShootsUploadDialogClient] Low-res image generated for', file.name);
-					resolve(new File([blob], file.name.replace(/(\.[^.]+)?$/, "_lowres$1"), { type: "image/jpeg" }));
-				}, "image/jpeg", 0.7);
+					canvas.toBlob(blob => {
+						if (!blob) {
+							return reject("Failed to create blob");
+						}
+						resolve(new File([blob], file.name.replace(/(\.[^.]+)?$/, "_lowres$1"), { type: "image/jpeg" }));
+					}, "image/jpeg", 0.7);
 			};
 			img.onerror = (err) => {
-				console.error('[ShootsUploadDialogClient] Image load error', err);
 				reject(err);
 			};
 			img.src = URL.createObjectURL(file);
@@ -72,82 +68,68 @@ export function ShootsUploadDialogClient({
 		const photos = formData.getAll("photos");
 		fileCountRef.current = photos.length;
 		setStatus(s => ({ ...s, totalSteps: photos.length * 5, step: 0, files: photos.length, progress: 0, text: "Preparing upload...", type: "info" }));
-		console.log('[ShootsUploadDialogClient] Starting upload for', photos.length, 'file(s)');
 		for (const [i, file] of photos.entries()) {
 			if (!(file instanceof File)) continue;
-			console.log(`[ShootsUploadDialogClient] Creating photo record (${i + 1}/${photos.length}) for`, file.name);
 			setStatus(s => ({ ...s, text: `Creating photo record (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: photo, error: photoError } = await createPhotoAction({ fileType: file.type });
 			if (photoError || !photo) {
-				console.error('[ShootsUploadDialogClient] Error creating photo record:', photoError);
 				setStatus(s => ({ ...s, text: "Error creating photo record", type: "error" }));
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Generating low-res image (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: lowResFile, error: lowResError } = await tryCatch(generateLowResImage(file));
 			if (lowResError) {
-				console.error('[ShootsUploadDialogClient] Error generating low-res image:', lowResError);
 				setStatus(s => ({ ...s, text: "Error generating low-res image", type: "error" }));
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Requesting presigned URLs (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { data: presignedUrl, error: presignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: file.type });
 			if (presignedError) {
-				console.error('[ShootsUploadDialogClient] Error getting presigned URLs:', presignedError);
 				setStatus(s => ({ ...s, text: "Error getting presigned URLs", type: "error" }));
 				return;
 			}
 			const { data: lowResPresignedUrl, error: lowResPresignedError } = await getPresignedUploadUrlAction({ photoId: photo.id, fileType: lowResFile.type, isLowRes: true });
 			if (lowResPresignedError) {
-				console.error('[ShootsUploadDialogClient] Error getting low-res presigned URLs:', lowResPresignedError);
 				setStatus(s => ({ ...s, text: "Error getting low-res presigned URLs", type: "error" }));
 				return;
 			}
 			setStatus(s => ({ ...s, text: `Uploading original (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			try {
-				await fetch(presignedUrl, {
-					method: "PUT",
-					headers: { "Content-Type": file.type },
-					body: file,
-				});
-				console.log(`[ShootsUploadDialogClient] Uploaded original for ${file.name} to S3`);
-			} catch (err) {
-				console.error('[ShootsUploadDialogClient] Error uploading original to S3:', err);
-				setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
-				return;
-			}
+				try {
+					await fetch(presignedUrl, {
+						method: "PUT",
+						headers: { "Content-Type": file.type },
+						body: file,
+					});
+				} catch {
+					setStatus(s => ({ ...s, text: "Error uploading original to S3", type: "error" }));
+					return;
+				}
 			setStatus(s => ({ ...s, text: `Uploading low-res (${i + 1}/${photos.length})...`, step: s.step + 1 }));
-			try {
-				await fetch(lowResPresignedUrl, {
-					method: "PUT",
-					headers: { "Content-Type": lowResFile.type },
-					body: lowResFile,
-				});
-				console.log(`[ShootsUploadDialogClient] Uploaded low-res for ${file.name} to S3`);
-			} catch (err) {
-				console.error('[ShootsUploadDialogClient] Error uploading low-res to S3:', err);
-				setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
-				return;
-			}
+				try {
+					await fetch(lowResPresignedUrl, {
+						method: "PUT",
+						headers: { "Content-Type": lowResFile.type },
+						body: lowResFile,
+					});
+				} catch {
+					setStatus(s => ({ ...s, text: "Error uploading low-res to S3", type: "error" }));
+					return;
+				}
 			setStatus(s => ({ ...s, text: `Updating database (${i + 1}/${photos.length})...`, step: s.step + 1 }));
 			const { error: updateError } = await updatePhotoS3PathAction({ photoId: photo.id, lowResS3Path: `photos/${photo.id}_lowres` });
 			if (updateError) {
-				console.error('[ShootsUploadDialogClient] Error updating database:', updateError);
 				setStatus(s => ({ ...s, text: "Error updating database", type: "error" }));
 				return;
 			}
-			console.log(`[ShootsUploadDialogClient] Finished upload and DB update for ${file.name}`);
 			setStatus(s => ({ ...s, progress: i + 1 }));
 		}
 		setStatus(s => ({ ...s, text: "Upload complete!", type: "success", progress: photos.length }));
-		console.log('[ShootsUploadDialogClient] All uploads complete');
 	}
 
 	function handleDrop(e: React.DragEvent<HTMLDivElement>) {
 		e.preventDefault();
 		if (e.dataTransfer.files && fileInputRef.current) {
 			const files = Array.from(e.dataTransfer.files);
-			console.log('[ShootsUploadDialogClient] Files dropped:', files.map(f => f.name));
 			setSelectedFiles(files);
 			fileInputRef.current.files = e.dataTransfer.files;
 		}
@@ -161,7 +143,6 @@ export function ShootsUploadDialogClient({
 		const files = e.target.files;
 		if (files) {
 			const fileArray = Array.from(files);
-			console.log('[ShootsUploadDialogClient] File input changed:', fileArray.map(f => f.name));
 			setSelectedFiles(fileArray);
 			setStatus(s => ({ ...s, files: fileArray.length }));
 		}
