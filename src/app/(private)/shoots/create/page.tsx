@@ -11,15 +11,15 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { ShootStatus } from "@/lib/enums";
 
 
-export default async function CreateShootPage({ searchParams }: { searchParams?: Record<string, string> }) {
-  const params = searchParams || {};
-  const defaultName = params.name || "";
-  const defaultTime = params.time || "";
-  const defaultLocation = params.location || "";
-  const defaultStatus = params.status || ShootStatus.Booked;
-  const defaultPriceCharged = params.price_charged || "";
-  const defaultNotes = params.notes || "";
-  const defaultCategoryId = params.category_id || "";
+export default async function CreateShootPage({ searchParams }: { searchParams?: Promise<Record<string, string>> }) {
+  const params = await searchParams;
+  const defaultName = params?.name || "";
+  const defaultTime = params?.time || "";
+  const defaultLocation = params?.location || "";
+  const defaultStatus = params?.status || ShootStatus.Booked;
+  const defaultPriceCharged = params?.price_charged || "";
+  const defaultNotes = params?.notes || "";
+  const defaultCategoryId = params?.category_id || "";
 
   // Correct headers usage for next.js server actions
   const session = await auth.api.getSession({ headers: await headers() });
@@ -81,4 +81,4 @@ export default async function CreateShootPage({ searchParams }: { searchParams?:
       </Form>
     </div>
   );
-
+}
