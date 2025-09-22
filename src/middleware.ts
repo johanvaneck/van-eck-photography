@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWebsitesBySubdomain } from './app/actions/websites';
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
