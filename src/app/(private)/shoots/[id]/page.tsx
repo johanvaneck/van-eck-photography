@@ -12,6 +12,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { deletePicture, markPictureFeatured } from "@/app/actions/pictures";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getCategories } from "@/app/actions/categories";
 
 export default async function Page({
   params,
@@ -38,6 +39,13 @@ export default async function Page({
     .where(
       and(eq(picturesTable.shootId, shootId), eq(picturesTable.userId, userId)),
     );
+
+  const { data: categories, error: errorCategories } = await getCategories(userId);
+
+  if (errorCategories) {
+    console.error(errorCategories);
+    return <div>Error loading categories: {errorCategories.message}</div>;
+  }
 
   const { data: s3Client, error: errorS3Client } = await getS3Client();
   if (errorS3Client) {
@@ -83,7 +91,11 @@ export default async function Page({
         <div className="flex flex-row gap-2 mt-2">
           <ShootsUploadDialog shootId={shootId} />
           <ShareButton shootId={shootId} />
-          <EditShootDialog shoot={shoot} updateShootAction={updateShoot} />
+          <EditShootDialog
+            shoot={shoot}
+            updateShootAction={updateShoot}
+            categories={categories}
+          />
         </div>
       </header>
       <main className="flex-1 w-full">

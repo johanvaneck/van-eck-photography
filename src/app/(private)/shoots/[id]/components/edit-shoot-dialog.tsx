@@ -10,9 +10,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Shoot } from "@/lib/db/types";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { ShootStatus } from "@/lib/enums";
+import { Suspense } from "react";
+import { CategorySelect } from "../../create/category-select";
+import { Category, Shoot } from "@/lib/db/types";
 import { updateShoot } from "@/app/actions/shoots";
 import { toast } from "sonner";
 
@@ -29,9 +32,11 @@ function formatLocalDateTime(dateString: string): string {
 
 export function EditShootDialog({
     shoot,
+    categories,
     updateShootAction,
 }: {
     shoot: Shoot;
+    categories: Array<Category>;
     updateShootAction: typeof updateShoot;
 }) {
     const [open, setOpen] = useState(false);
@@ -43,29 +48,20 @@ export function EditShootDialog({
         const name = (formData.get("name") ?? "") as string;
         const time = (formData.get("time") ?? "") as string;
         const location = (formData.get("location") ?? "") as string;
-        const depositRaw = formData.get("deposit");
-        const priceChargedRaw = formData.get("price_charged");
+        const price_charged = formData.get("price_charged") ? parseFloat(formData.get("price_charged") as string) : undefined;
         const status = (formData.get("status") ?? "") as string;
         const notes = (formData.get("notes") ?? "") as string;
-
-        const deposit =
-            depositRaw && depositRaw.toString().trim() !== ""
-                ? parseFloat(depositRaw.toString())
-                : undefined;
-        const price_charged =
-            priceChargedRaw && priceChargedRaw.toString().trim() !== ""
-                ? parseFloat(priceChargedRaw.toString())
-                : undefined;
+        const categoryId = formData.get("category_id")?.toString() || undefined;
 
         const data = {
             ...shoot,
             name,
             time,
             location,
-            deposit,
             price_charged,
             status,
             notes,
+            categoryId,
         };
 
         const { error } = await updateShootAction(data);
@@ -87,9 +83,10 @@ export function EditShootDialog({
                 <DialogHeader>
                     <DialogTitle>Edit Shoot</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-4 rounded-lg bg-card w-full max-w-md mx-auto">
                     <Label htmlFor="name">Name</Label>
                     <Input name="name" defaultValue={shoot.name || ""} />
+
                     <Label htmlFor="time">Time</Label>
                     <Input
                         name="time"
@@ -97,18 +94,41 @@ export function EditShootDialog({
                         color="primary"
                         defaultValue={shoot.time ? formatLocalDateTime(shoot.time) : ""}
                     />
+
                     <Label htmlFor="location">Location</Label>
                     <Input name="location" defaultValue={shoot.location || ""} />
+
+                    <Label htmlFor="status">Status</Label>
+                    <Select name="status" defaultValue={shoot.status || ShootStatus.Booked}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value={ShootStatus.Booked}>{ShootStatus.Booked}</SelectItem>
+                            <SelectItem value={ShootStatus.DepositPaid}>{ShootStatus.DepositPaid}</SelectItem>
+                            <SelectItem value={ShootStatus.FullyPaid}>{ShootStatus.FullyPaid}</SelectItem>
+                            <SelectItem value={ShootStatus.GalleryDelivered}>{ShootStatus.GalleryDelivered}</SelectItem>
+                        </SelectContent>
+                    </Select>
+
                     <Label htmlFor="price_charged">Price Charged</Label>
                     <Input
                         name="price_charged"
                         type="number"
                         defaultValue={shoot.price_charged?.toString() || ""}
                     />
-                    <Label htmlFor="status">Status</Label>
-                    <Input name="status" defaultValue={shoot.status || ""} />
+
                     <Label htmlFor="notes">Notes</Label>
-                    <Textarea name="notes" defaultValue={shoot.notes || ""} />
+                    <Input name="notes" defaultValue={shoot.notes || ""} />
+
+                    <Label htmlFor="category_id">Category</Label>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <CategorySelect
+                            defaultValue={shoot.categoryId || ""}
+                            categories={categories}
+                        />
+                    </Suspense>
+
                     <DialogFooter>
                         <Button type="submit">Save</Button>
                     </DialogFooter>

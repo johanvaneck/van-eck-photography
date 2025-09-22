@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import Form from "next/form";
 import { FormButton } from "@/components/form-button";
@@ -5,14 +6,13 @@ import { Label } from "@/components/ui/label";
 import { createShoot } from "@/app/actions/shoots";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { Suspense } from "react";
 import { CategorySelect } from "./category-select";
-// Removed useSearchParams, will use searchParams from props
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { ShootStatus } from "@/lib/enums";
 
-export default async function Page({ searchParams }: { searchParams?: Promise<Record<string, string>> }) {
-  const params = searchParams ? await searchParams : {};
+
+export default async function CreateShootPage({ searchParams }: { searchParams?: Record<string, string> }) {
+  const params = searchParams || {};
   const defaultName = params.name || "";
   const defaultTime = params.time || "";
   const defaultLocation = params.location || "";
@@ -20,6 +20,18 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
   const defaultPriceCharged = params.price_charged || "";
   const defaultNotes = params.notes || "";
   const defaultCategoryId = params.category_id || "";
+
+  // Correct headers usage for next.js server actions
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) {
+    return <div>Please sign in</div>;
+  }
+  const { getCategories } = await import("@/app/actions/categories");
+  const { data: categories, error } = await getCategories(userId);
+  if (error) {
+    return <div>Error loading categories: {error.message}</div>;
+  }
 
   const handleSubmit = async (formData: FormData) => {
     "use server";
@@ -30,12 +42,6 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
     const price_charged = formData.get("price_charged") ? parseInt(formData.get("price_charged") as string) : undefined;
     const notes = formData.get("notes")?.toString() || undefined;
     const categoryId = formData.get("category_id")?.toString() || undefined;
-    const session = await auth.api.getSession({ headers: await headers() });
-    const userId = session?.user?.id;
-    if (!userId) {
-      alert("Please sign in");
-      return;
-    }
     await createShoot({ name, time, location, status, price_charged, notes, userId, categoryId });
   };
 
@@ -58,8 +64,6 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={ShootStatus.Booked}>{ShootStatus.Booked}</SelectItem>
-            <SelectItem value={ShootStatus.DepositPaid}>{ShootStatus.DepositPaid}</SelectItem>
-            <SelectItem value={ShootStatus.FullyPaid}>{ShootStatus.FullyPaid}</SelectItem>
             <SelectItem value={ShootStatus.GalleryDelivered}>{ShootStatus.GalleryDelivered}</SelectItem>
           </SelectContent>
         </Select>
@@ -71,12 +75,10 @@ export default async function Page({ searchParams }: { searchParams?: Promise<Re
         <Input name="notes" id="notes" defaultValue={defaultNotes} />
 
         <Label htmlFor="category_id">Category</Label>
-        <Suspense fallback={<div>Loading...</div>}>
-          <CategorySelect defaultValue={defaultCategoryId} />
-        </Suspense>
+        <CategorySelect defaultValue={defaultCategoryId} categories={categories} />
 
         <FormButton text="Create Shoot" />
       </Form>
     </div>
   );
-}
+
