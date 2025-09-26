@@ -1,0 +1,16 @@
+<svg width="230" height="80" viewBox="0 0 230 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="230" height="80" rx="16" fill="#111"/>
+  <!-- pici text -->
+  <text x="35" y="55" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="bold" fill="#ccc">pici</text>
+  <!-- camera icon just right of the second 'i' in 'pici', aligned with bottom of text -->
+  <g transform="translate(120, 50)" fill="#777">
+    <!-- Camera body -->
+    <rect x="0" y="2" width="14" height="10" rx="2"/>
+    <!-- Lens -->
+    <circle cx="7" cy="7" r="3" fill="#ccc"/>
+    <!-- Viewfinder -->
+    <rect x="10" y="0" width="4" height="4" rx="1" border-radius="1" stroke="#ccc"/>
+  </g>
+  <!-- sh text -->
+  <text x="138" y="55" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="bold" fill="#ccc">sh</text>
+</svg>

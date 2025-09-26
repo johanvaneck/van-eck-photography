@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex flex-col items-center justify-center px-4">
       {/* Hero Section */}
       <section className="w-full max-w-3xl text-center py-20">
-        <h1 className="text-5xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
-          pici.sh
+        <h1 className="flex items-center justify-center mb-10">
+          <img src="/pici-logo.svg" alt="pici.sh" className="h-32" />
         </h1>
         <p className="text-xl text-gray-700 mb-8">
           The platform built for photographers. Manage shoots, clients, and galleries with ease—designed to help you grow your creative business.
