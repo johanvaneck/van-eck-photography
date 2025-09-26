@@ -100,3 +100,29 @@ export async function createInvoice(data: Omit<CreateInvoice, 'userId' | 'invoic
         error: null,
     };
 }
+
+export async function deleteInvoice(id: string): Promise<Result<boolean>> {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user.id;
+    if (!userId) {
+        return {
+            data: null,
+            error: new Error('User not found'),
+        };
+    }
+    const { error } = await tryCatch(
+        db.delete(invoicesTable)
+            .where(eq(invoicesTable.id, id))
+    );
+    if (error) {
+        return {
+            data: null,
+            error,
+        };
+    }
+    revalidatePath('/invoice');
+    return {
+        data: true,
+        error: null,
+    };
+}

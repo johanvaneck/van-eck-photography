@@ -1,4 +1,6 @@
-import { getInvoices } from "@/app/actions/invoices";
+import { getInvoices, deleteInvoice } from "@/app/actions/invoices";
+import { CopyPublicLinkButton } from "./copy-public-link-button";
+import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,6 +8,7 @@ import CreateInvoiceDialog from "./create-invoice-dialog";
 
 export default async function InvoicePage() {
     const { data: invoices, error } = await getInvoices();
+
     return (
         <div className="w-full min-h-screen">
             <div className="flex items-center justify-between mb-6 px-8 pt-8">
@@ -33,6 +36,7 @@ export default async function InvoicePage() {
                                 <TableHead className="text-right">Amount</TableHead>
                                 <TableHead className="text-right">Download</TableHead>
                                 <TableHead className="text-right">Public Link</TableHead>
+                                <TableHead className="text-right">Delete</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -62,13 +66,15 @@ export default async function InvoicePage() {
                                         </a>
                                     </TableCell>
                                     <TableCell className="text-right h-10">
-                                        <a
-                                            href={`/public/invoice/${invoice.id}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <Button variant="secondary" size="sm">View</Button>
-                                        </a>
+                                        <CopyPublicLinkButton invoiceId={invoice.id} />
+                                    </TableCell>
+                                    <TableCell className="text-right h-10">
+                                        <ConfirmDeleteDialog onConfirmAction={async () => {
+                                            "use server";
+                                            await deleteInvoice(invoice.id);
+                                        }}>
+                                            <Button variant="destructive" size="sm">Delete</Button>
+                                        </ConfirmDeleteDialog>
                                     </TableCell>
                                 </TableRow>
                             ))}
