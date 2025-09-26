@@ -32,6 +32,7 @@ export default async function InvoicePage() {
                                 <TableHead className="text-left">Description</TableHead>
                                 <TableHead className="text-right">Amount</TableHead>
                                 <TableHead className="text-right">Download</TableHead>
+                                <TableHead className="text-right">Public Link</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -42,14 +43,31 @@ export default async function InvoicePage() {
                                     <TableCell className="text-left h-10">{invoice.clientName}</TableCell>
                                     <TableCell className="text-left h-10">{invoice.description}</TableCell>
                                     <TableCell className="text-right h-10">R {invoice.amount}</TableCell>
-                                    <TableCell className="text-right h-10">
+                                    <TableCell className="text-right min-h-16 flex gap-2 justify-end items-center">
                                         <a
                                             href={`/api/invoice-svg?id=${invoice.id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             download={`invoice-${invoice.invoiceNumber}.svg`}
                                         >
-                                            <Button variant="outline" size="sm">Download</Button>
+                                            <Button variant="outline" size="sm">SVG</Button>
+                                        </a>
+                                        <a
+                                            href={`/api/invoice-png?id=${invoice.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download={`invoice-${invoice.invoiceNumber}.png`}
+                                        >
+                                            <Button variant="outline" size="sm">PNG</Button>
+                                        </a>
+                                    </TableCell>
+                                    <TableCell className="text-right h-10">
+                                        <a
+                                            href={`/public/invoice/${invoice.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <Button variant="secondary" size="sm">View</Button>
                                         </a>
                                     </TableCell>
                                 </TableRow>
