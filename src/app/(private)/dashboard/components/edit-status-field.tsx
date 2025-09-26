@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Shoot } from "@/lib/db/types";
 import { updateShoot } from "@/app/actions/shoots";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -12,16 +11,14 @@ export function EditStatusField({
     shoot: Shoot;
     updateShootAction: typeof updateShoot;
 }) {
-    const [value, setValue] = useState(shoot.status || ShootStatus.DepositPaid);
-
-    const handleBlur = async () => {
-        if (value !== shoot.status) {
-            await updateShootAction({ ...shoot, status: value });
+    const handleChange = async (val: ShootStatus) => {
+        if (val !== shoot.status) {
+            await updateShootAction({ ...shoot, status: val });
         }
     };
 
     return (
-        <Select value={value} onValueChange={(val) => { setValue(val); handleBlur(); }}>
+        <Select defaultValue={shoot.status ?? undefined} onValueChange={handleChange}>
             <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select status" />
             </SelectTrigger>
