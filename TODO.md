@@ -1,3 +1,2 @@
-- Invoices
 - Price list
 - Payment history

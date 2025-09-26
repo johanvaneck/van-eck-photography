@@ -126,3 +126,13 @@ export const invoicesTable = sqliteTable("invoices", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const priceListTable = sqliteTable("price_list", {
+  ...tableDefaults,
+  title: text("title").notNull(), // e.g. "Wedding Package", "Portrait Session"
+  description: text("description"),
+  price: integer("price").notNull(), // in cents
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});

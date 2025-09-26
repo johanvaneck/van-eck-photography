@@ -43,6 +43,10 @@ const items = [
         title: "Featured",
         url: routes.featured,
       },
+      {
+        title: "Price List",
+        url: routes.priceList,
+      },
     ],
   },
 ];

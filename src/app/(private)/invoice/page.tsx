@@ -41,13 +41,13 @@ export default async function InvoicePage() {
                         </TableHeader>
                         <TableBody>
                             {invoices.map((invoice) => (
-                                <TableRow key={invoice.id} className="border-b last:border-0 h-10">
-                                    <TableCell className="text-left h-10">{invoice.invoiceNumber}</TableCell>
-                                    <TableCell className="text-left h-10">{invoice.date}</TableCell>
-                                    <TableCell className="text-left h-10">{invoice.clientName}</TableCell>
-                                    <TableCell className="text-left h-10">{invoice.description}</TableCell>
-                                    <TableCell className="text-right h-10">R {invoice.amount}</TableCell>
-                                    <TableCell className="text-right min-h-16 flex gap-2 justify-end items-center">
+                                <TableRow key={invoice.id} className="min-h-16">
+                                    <TableCell className="text-left">{invoice.invoiceNumber}</TableCell>
+                                    <TableCell className="text-left">{invoice.date}</TableCell>
+                                    <TableCell className="text-left">{invoice.clientName}</TableCell>
+                                    <TableCell className="text-left">{invoice.description}</TableCell>
+                                    <TableCell className="text-right">R {invoice.amount}</TableCell>
+                                    <TableCell className="text-right flex gap-2 justify-end items-center">
                                         <a
                                             href={`/api/invoice-svg?id=${invoice.id}`}
                                             target="_blank"
@@ -65,10 +65,10 @@ export default async function InvoicePage() {
                                             <Button variant="outline" size="sm">PNG</Button>
                                         </a>
                                     </TableCell>
-                                    <TableCell className="text-right h-10">
+                                    <TableCell className="text-right">
                                         <CopyPublicLinkButton invoiceId={invoice.id} />
                                     </TableCell>
-                                    <TableCell className="text-right h-10">
+                                    <TableCell className="text-right">
                                         <ConfirmDeleteDialog onConfirmAction={async () => {
                                             "use server";
                                             await deleteInvoice(invoice.id);
