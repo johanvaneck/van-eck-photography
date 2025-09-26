@@ -1,5 +1,5 @@
-// Card imports removed
-import { Button } from "@/components/ui/button";
+import { YocoCheckoutButton } from "./components/yoco-checkout-button";
+import { createYocoCheckout } from "@/app/actions/checkout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -47,9 +47,7 @@ export default function UpgradePage() {
             </li>
           </ul>
           <div className="mt-auto w-full flex flex-col items-center gap-2">
-            <Button variant="default" size="lg" className="w-full">
-              Upgrade Now
-            </Button>
+            <YocoCheckoutButton amount={1900} createYocoCheckoutAction={createYocoCheckout} />
             <span className="text-xs text-muted-foreground">14-day money-back guarantee</span>
           </div>
         </Card>
@@ -80,14 +78,9 @@ export default function UpgradePage() {
               <span className="font-semibold">Custom branding</span>
             </li>
           </ul>
-          <div className="mt-auto w-full flex justify-center">
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full bg-blue-600 hover:bg-blue-700"
-            >
-              Choose Business
-            </Button>
+          <div className="mt-auto w-full flex flex-col items-center gap-2">
+            <YocoCheckoutButton amount={4900} color="business" createYocoCheckoutAction={createYocoCheckout} />
+            <span className="text-xs text-muted-foreground">14-day money-back guarantee</span>
           </div>
         </Card>
       </div>
