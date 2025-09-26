@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Link2Icon } from "lucide-react";
 import { useState } from "react";
 
 export function CopyPublicLinkButton({ invoiceId }: { invoiceId: string }) {
@@ -15,7 +16,8 @@ export function CopyPublicLinkButton({ invoiceId }: { invoiceId: string }) {
     }
 
     return (
-        <Button variant="secondary" size="sm" onClick={handleCopy}>
+        <Button variant="secondary" size="sm" className="gap-2" onClick={handleCopy}>
+            <Link2Icon className="w-4 h-4" />
             {copied ? "Copied!" : "Copy Link"}
         </Button>
     );

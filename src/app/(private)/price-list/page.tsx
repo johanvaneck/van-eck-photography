@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CreatePriceListDialog from "@/app/(private)/price-list/create-price-list-dialog";
 import EditPriceListDialog from "@/app/(private)/price-list/edit-price-list-dialog";
+
 import { ConfirmDeleteDialog } from "@/app/(private)/invoice/confirm-delete-dialog";
+import { TrashIcon } from "lucide-react";
 
 export default async function PriceListPage() {
     const { data: items, error } = await getPriceList();
@@ -62,7 +64,9 @@ export default async function PriceListPage() {
                                             "use server";
                                             await deletePriceListItem(item.id);
                                         }}>
-                                            <Button variant="destructive" size="sm">Delete</Button>
+                                                                                        <Button variant="destructive" size="sm" className="gap-2">
+                                                                                            <TrashIcon className="w-4 h-4" /> Delete
+                                                                                        </Button>
                                         </ConfirmDeleteDialog>
                                     </TableCell>
                                 </TableRow>

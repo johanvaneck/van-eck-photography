@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/table";
 import { AddCategoryDialog } from "./add-category-dialog";
 import { EditCategoryDialog } from "./edit-category-dialog";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -31,7 +33,7 @@ export async function CategoriesTable() {
           <TableHead className="w-[100px] p-2">
             <AddCategoryDialog />
           </TableHead>
-          <TableHead></TableHead>
+          <TableHead className="w-[100px] p-2 text-right">Delete</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -41,7 +43,11 @@ export async function CategoriesTable() {
             <TableCell className="">
               <EditCategoryDialog category={category} />
             </TableCell>
-            <TableCell></TableCell>
+            <TableCell className="text-right">
+              <Button variant="destructive" size="sm" className="gap-2">
+                <TrashIcon className="w-4 h-4" /> Delete
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

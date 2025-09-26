@@ -1,2 +1,1 @@
-- Price list
 - Payment history

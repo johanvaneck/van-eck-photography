@@ -5,6 +5,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CreateInvoiceDialog from "./create-invoice-dialog";
+import { TrashIcon, DownloadIcon } from "lucide-react";
 
 export default async function InvoicePage() {
     const { data: invoices, error } = await getInvoices();
@@ -54,7 +55,9 @@ export default async function InvoicePage() {
                                             rel="noopener noreferrer"
                                             download={`invoice-${invoice.invoiceNumber}.svg`}
                                         >
-                                            <Button variant="outline" size="sm">SVG</Button>
+                                            <Button variant="outline" size="sm" className="gap-2">
+                                                <DownloadIcon className="w-4 h-4" /> SVG
+                                            </Button>
                                         </a>
                                         <a
                                             href={`/api/invoice-png?id=${invoice.id}`}
@@ -62,7 +65,9 @@ export default async function InvoicePage() {
                                             rel="noopener noreferrer"
                                             download={`invoice-${invoice.invoiceNumber}.png`}
                                         >
-                                            <Button variant="outline" size="sm">PNG</Button>
+                                            <Button variant="outline" size="sm" className="gap-2">
+                                                <DownloadIcon className="w-4 h-4" /> PNG
+                                            </Button>
                                         </a>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -73,7 +78,9 @@ export default async function InvoicePage() {
                                             "use server";
                                             await deleteInvoice(invoice.id);
                                         }}>
-                                            <Button variant="destructive" size="sm">Delete</Button>
+                                            <Button variant="destructive" size="sm" className="gap-2">
+                                                <TrashIcon className="w-4 h-4" /> Delete
+                                            </Button>
                                         </ConfirmDeleteDialog>
                                     </TableCell>
                                 </TableRow>
