@@ -16,9 +16,20 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { routes } from "@/lib/routes";
-import { ChevronRight, SquareTerminal } from "lucide-react";
+import { ChevronRight, SquareTerminal, NotebookIcon } from "lucide-react";
 
 const items = [
+  {
+    title: "Admin",
+    icon: NotebookIcon,
+    isActive: true,
+    items: [
+      {
+        title: "Invoices",
+        url: routes.invoices,
+      },
+    ],
+  },
   {
     title: "Website",
     icon: SquareTerminal,
