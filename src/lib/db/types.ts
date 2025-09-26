@@ -1,4 +1,6 @@
-import { categoriesTable, picturesTable, shootsTable } from "./schema";
+import { categoriesTable, picturesTable, shootsTable, invoicesTable } from "./schema";
+export type Invoice = typeof invoicesTable.$inferSelect;
+export type CreateInvoice = typeof invoicesTable.$inferInsert;
 
 export type Shoot = typeof shootsTable.$inferSelect;
 export type CreateShoot = typeof shootsTable.$inferInsert;
