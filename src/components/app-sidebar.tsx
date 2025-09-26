@@ -12,7 +12,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Shoot, User } from "@/lib/db/types";
+import { Shoot } from "@/lib/db/types";
+import { User } from "better-auth";
 
 export function AppSidebar({
   ...props

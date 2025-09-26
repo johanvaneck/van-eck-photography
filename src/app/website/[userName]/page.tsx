@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { getUserWebsiteData } from "@/app/actions/website";
 import WebsitePriceListSection from "@/app/website/[userName]/price-list-section";
 import { notFound } from "next/navigation";

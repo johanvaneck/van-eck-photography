@@ -1,7 +1,8 @@
 import { generateInvoiceSVG } from '@/app/actions/invoice-svg';
 
-export default async function PublicInvoicePage({ params }: { params: { id: string } }) {
-    const svg = await generateInvoiceSVG(params.id);
+export default async function PublicInvoicePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const svg = await generateInvoiceSVG(id);
     if (!svg) {
         return <div className="text-center py-16 text-red-500">Invoice not found.</div>;
     }

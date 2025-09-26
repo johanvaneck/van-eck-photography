@@ -36,7 +36,6 @@ export default function CreateInvoiceForm({
             try {
                 const result = await createInvoiceAction({
                     id: "inv_" + nanoid(),
-                    invoiceNumber: "", // placeholder, will be replaced in backend
                     date: form.date,
                     clientName: form.clientName,
                     description: form.description,

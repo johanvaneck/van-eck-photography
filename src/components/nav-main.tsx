@@ -15,8 +15,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { User } from "@/lib/db/types";
 import { routes } from "@/lib/routes";
+import { User } from "better-auth";
 import { ChevronRight, SquareTerminal, NotebookIcon } from "lucide-react";
 
 
