@@ -10,10 +10,10 @@ export default function CreatePriceListDialog({ onCreate }: { onCreate: (data: {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                                <Button variant="default" className="gap-2">
-                                    <PlusIcon className="w-4 h-4" />
-                                    Add Item
-                                </Button>
+                <Button variant="default" className="gap-2">
+                    <PlusIcon className="w-4 h-4" />
+                    Add Item
+                </Button>
             </DialogTrigger>
             <DialogContent className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                 <DialogHeader>

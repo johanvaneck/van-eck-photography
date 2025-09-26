@@ -13,10 +13,10 @@ export default function EditPriceListDialog({ item, onEdit }: {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="gap-2">
-                                    <EditIcon className="w-4 h-4" />
-                                    Edit
-                                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                    <EditIcon className="w-4 h-4" />
+                    Edit
+                </Button>
             </DialogTrigger>
             <DialogContent className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6">
                 <DialogHeader>

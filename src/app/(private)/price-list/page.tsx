@@ -64,9 +64,9 @@ export default async function PriceListPage() {
                                             "use server";
                                             await deletePriceListItem(item.id);
                                         }}>
-                                                                                        <Button variant="destructive" size="sm" className="gap-2">
-                                                                                            <TrashIcon className="w-4 h-4" /> Delete
-                                                                                        </Button>
+                                            <Button variant="destructive" size="sm" className="gap-2">
+                                                <TrashIcon className="w-4 h-4" /> Delete
+                                            </Button>
                                         </ConfirmDeleteDialog>
                                     </TableCell>
                                 </TableRow>
