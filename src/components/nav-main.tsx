@@ -15,43 +15,52 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { User } from "@/lib/db/types";
 import { routes } from "@/lib/routes";
 import { ChevronRight, SquareTerminal, NotebookIcon } from "lucide-react";
 
-const items = [
-  {
-    title: "Admin",
-    icon: NotebookIcon,
-    isActive: true,
-    items: [
-      {
-        title: "Invoices",
-        url: routes.invoices,
-      },
-    ],
-  },
-  {
-    title: "Website",
-    icon: SquareTerminal,
-    isActive: true,
-    items: [
-      {
-        title: "Categories",
-        url: routes.categories,
-      },
-      {
-        title: "Featured",
-        url: routes.featured,
-      },
-      {
-        title: "Price List",
-        url: routes.priceList,
-      },
-    ],
-  },
-];
 
-export function NavMain() {
+export function NavMain({
+  user
+}: {
+  user: User
+}) {
+  const items = [
+    {
+      title: "Admin",
+      icon: NotebookIcon,
+      isActive: true,
+      items: [
+        {
+          title: "Invoices",
+          url: routes.invoices,
+        },
+      ],
+    },
+    {
+      title: "Website",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "View Website",
+          url: routes.website(user.name),
+        },
+        {
+          title: "Categories",
+          url: routes.categories,
+        },
+        {
+          title: "Featured",
+          url: routes.featured,
+        },
+        {
+          title: "Price List",
+          url: routes.priceList,
+        },
+      ],
+    },
+  ];
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Menu</SidebarGroupLabel>

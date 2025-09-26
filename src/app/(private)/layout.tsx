@@ -38,10 +38,7 @@ export default async function Layout({
   return (
     <SidebarProvider>
       <AppSidebar
-        user={{
-          name: user.name,
-          email: user.email,
-        }}
+        user={user}
         shoots={shoots}
       />
       <SidebarInset>

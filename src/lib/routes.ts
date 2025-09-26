@@ -14,4 +14,7 @@ export const routes = {
   signOut: "/auth/sign-out",
   invoices: "/invoice",
   priceList: "/price-list",
+  website(userName: string) {
+    return `/website/${userName}`;
+  },
 };

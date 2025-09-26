@@ -12,16 +12,12 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Shoot } from "@/lib/db/types";
+import { Shoot, User } from "@/lib/db/types";
 
 export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
+  user: User;
   shoots: Array<Shoot>;
 }) {
   return (
@@ -31,7 +27,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavShoots shoots={props.shoots} />
-        <NavMain />
+        <NavMain user={props.user} />
       </SidebarContent>
       <SidebarFooter></SidebarFooter>
       <SidebarRail />
