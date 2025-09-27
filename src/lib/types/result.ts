@@ -10,6 +10,8 @@ export type Failure = {
 
 export type Result<T> = Success<T> | Failure;
 
+export type AsyncResult<T> = Promise<Result<T>>;
+
 export async function tryCatch<T>(
   promise: Promise<T>,
   options?: {

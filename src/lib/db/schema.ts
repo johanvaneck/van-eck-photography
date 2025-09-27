@@ -136,3 +136,13 @@ export const priceListTable = sqliteTable("price_list", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const enquiriesTable = sqliteTable("enquiries", {
+  ...tableDefaults,
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  message: text("message").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});

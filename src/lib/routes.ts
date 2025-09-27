@@ -4,6 +4,7 @@ export const routes = {
   account: `${appPrefix}/account`,
   billing: `${appPrefix}/billing`,
   categories: `${appPrefix}/categories`,
+  enquiries: `${appPrefix}/enquiries`,
   featured: `${appPrefix}/featured`,
   invoices: `${appPrefix}/invoice`,
   notifications: `${appPrefix}/notifications`,

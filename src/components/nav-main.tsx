@@ -35,6 +35,10 @@ export function NavMain({
           title: "Invoices",
           url: routes.invoices,
         },
+        {
+          title: "Enquiries",
+          url: routes.enquiries,
+        },
       ],
     },
     {

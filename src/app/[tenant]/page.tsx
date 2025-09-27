@@ -2,7 +2,8 @@ import { getUserWebsiteData } from "@/app/[tenant]/actions/website";
 import WebsitePriceListSection from "./website/price-list-section";
 import { notFound } from "next/navigation";
 import WebsiteGalleryClient from "./website/website-gallery-client";
-
+import { EnquiryForm } from "./website/enquiry-form";
+import { submitEnquiry } from "./website/actions/enquiry";
 
 export default async function WebsitePage({
     params
@@ -25,6 +26,7 @@ export default async function WebsitePage({
             <div className="flex-1 pb-16">
                 <WebsiteGalleryClient categories={categories} featuredPictures={featuredPictures} />
                 <WebsitePriceListSection priceList={priceList} />
+                <EnquiryForm submitEnquiryAction={submitEnquiry} userId={user.id} />
             </div>
         </main>
     );
