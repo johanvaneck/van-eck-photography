@@ -1,20 +1,21 @@
+const appPrefix = "/app";
 export const routes = {
-  signIn: "/auth/sign-in",
-  signUp: "/auth/sign-up",
-  dashboard: "/dashboard",
-  shoots: "/shoots",
-  shootsCreate: "/shoots/create",
-  pictures: "/pictures",
-  categories: "/categories",
-  featured: "/featured",
-  upgrade: "/upgrade",
-  account: "/account",
-  billing: "/billing",
-  notifications: "/notifications",
-  signOut: "/auth/sign-out",
-  invoices: "/invoice",
-  priceList: "/price-list",
+  dashboard: `${appPrefix}`,
+  account: `${appPrefix}/account`,
+  billing: `${appPrefix}/billing`,
+  categories: `${appPrefix}/categories`,
+  featured: `${appPrefix}/featured`,
+  invoices: `${appPrefix}/invoice`,
+  notifications: `${appPrefix}/notifications`,
+  pictures: `${appPrefix}/pictures`,
+  priceList: `${appPrefix}/price-list`,
+  shoots: `${appPrefix}/shoots`,
+  shootsCreate: `${appPrefix}/shoots/create`,
+  signIn: `/auth/sign-in`,
+  signOut: `/auth/sign-out`,
+  signUp: `/auth/sign-up`,
+  upgrade: `${appPrefix}/upgrade`,
   website(userName: string) {
-    return `/website/${userName}`;
+    return `${appPrefix}/website/${userName}`;
   },
 };

@@ -1,0 +1,110 @@
+import { db } from "@/lib/db";
+import { picturesTable, shootsTable } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
+import { ShootsUploadDialog } from "./components/shoots-upload-dialog";
+import { EditShootDialog } from "./components/edit-shoot-dialog";
+import { updateShoot } from "@/app/[tenant]/actions/shoots";
+import { ShareButton } from "./components/share-button";
+import { getS3Client } from "@/lib/s3";
+import { GalleryClient } from "./components/gallery-client";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { deletePicture, markPictureFeatured } from "@/app/[tenant]/actions/pictures";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { getCategories } from "@/app/[tenant]/actions/categories";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id: shootId } = await params;
+
+  // Get shoot details
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) {
+    return <div>Please sign in</div>;
+  }
+  const shootArr = await db
+    .select()
+    .from(shootsTable)
+    .where(and(eq(shootsTable.id, shootId), eq(shootsTable.userId, userId)));
+  const shoot = shootArr[0];
+
+  const pictures = await db
+    .select()
+    .from(picturesTable)
+    .where(
+      and(eq(picturesTable.shootId, shootId), eq(picturesTable.userId, userId)),
+    );
+
+  const { data: categories, error: errorCategories } = await getCategories(userId);
+
+  if (errorCategories) {
+    console.error(errorCategories);
+    return <div>Error loading categories: {errorCategories.message}</div>;
+  }
+
+  const { data: s3Client, error: errorS3Client } = await getS3Client();
+  if (errorS3Client) {
+    console.error(errorS3Client);
+    return (
+      <div className="text-red-500 text-center py-8">Error loading images</div>
+    );
+  }
+
+  // Generate presigned URLs for all images (low-res and high-res)
+  const presignedPictures = await Promise.all(
+    pictures
+      .filter((p) => !!p.s3Path)
+      .map(async (picture) => {
+        const lowResKey = picture.lowResS3Path || picture.s3Path;
+        const lowResUrl = await getSignedUrl(
+          s3Client,
+          new GetObjectCommand({ Bucket: "vep", Key: lowResKey }),
+          { expiresIn: 60 * 60 },
+        );
+        const highResUrl = await getSignedUrl(
+          s3Client,
+          new GetObjectCommand({ Bucket: "vep", Key: picture.s3Path }),
+          { expiresIn: 60 * 60 },
+        );
+        return {
+          ...picture,
+          lowResUrl,
+          highResUrl,
+        };
+      }),
+  );
+
+  return (
+    <div className="flex flex-col min-h-screen bg-background rounded">
+      <header className="flex flex-col items-center justify-center py-8 gap-2 border-b border-border bg-card shadow rounded mb-4 overflow-x-hidden">
+        <h1 className="text-3xl font-bold mb-2 text-foreground rounded">
+          {shoot?.name || "Shoot"}
+        </h1>
+        <div className="flex flex-row items-center gap-4 text-sm text-muted-foreground rounded py-1">
+          {shootId}
+        </div>
+        <div className="flex flex-row gap-2 mt-2">
+          <ShootsUploadDialog shootId={shootId} />
+          <ShareButton shootId={shootId} />
+          <EditShootDialog
+            shoot={shoot}
+            updateShootAction={updateShoot}
+            categories={categories}
+          />
+        </div>
+      </header>
+      <main className="flex-1 w-full">
+        <GalleryClient
+          pictures={presignedPictures}
+          markPictureFeaturedAction={markPictureFeatured}
+          deletePictureAction={deletePicture}
+        />
+      </main>
+    </div>
+  );
+}

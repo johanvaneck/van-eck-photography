@@ -1,3 +1,5 @@
+import { routes } from "@/lib/routes";
+
 /* eslint-disable @next/next/no-img-element */
 export default function Home() {
   return (
@@ -11,7 +13,7 @@ export default function Home() {
           The platform built for photographers. Manage shoots, clients, and galleries with ease—designed to help you grow your creative business.
         </p>
         <a
-          href="/auth/sign-up"
+          href={routes.signIn}
           className="inline-block px-8 py-3 bg-black text-white rounded-full font-semibold text-lg shadow-lg hover:bg-gray-800 transition"
         >
           Get Started
