@@ -141,6 +141,9 @@ export const enquiriesTable = sqliteTable("enquiries", {
   ...tableDefaults,
   name: text("name").notNull(),
   email: text("email").notNull(),
+  categoryId: text("category_id")
+    .references(() => categoriesTable.id, { onDelete: "set null" }),
+  dateOfInterest: text("date_of_interest"),
   message: text("message").notNull(),
   userId: text("user_id")
     .notNull()

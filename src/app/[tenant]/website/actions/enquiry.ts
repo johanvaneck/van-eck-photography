@@ -7,6 +7,8 @@ export async function submitEnquiry(
     form: {
         name: string;
         email: string;
+        categoryId?: string;
+        dateOfInterest?: string;
         message: string;
         userId: string;
     }
@@ -18,6 +20,8 @@ export async function submitEnquiry(
         id: "enquiry_" + nanoid(),
         name: form.name,
         email: form.email,
+        categoryId: form.categoryId ?? null,
+        dateOfInterest: form.dateOfInterest ?? "",
         message: form.message,
         userId: form.userId,
     });

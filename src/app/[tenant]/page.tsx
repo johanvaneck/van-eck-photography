@@ -26,7 +26,11 @@ export default async function WebsitePage({
             <div className="flex-1 pb-16">
                 <WebsiteGalleryClient categories={categories} featuredPictures={featuredPictures} />
                 <WebsitePriceListSection priceList={priceList} />
-                <EnquiryForm submitEnquiryAction={submitEnquiry} userId={user.id} />
+                <EnquiryForm
+                    submitEnquiryAction={submitEnquiry}
+                    userId={user.id}
+                    categories={categories}
+                />
             </div>
         </main>
     );

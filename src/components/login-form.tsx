@@ -14,8 +14,6 @@ import { authClient } from "../lib/auth/client"; //import the auth client
 import { useCallback, useState } from "react";
 import { routes } from "@/lib/routes";
 
-const callbackURL = routes.dashboard;
-
 export function LoginForm({
   type,
   className,
@@ -56,7 +54,7 @@ export function LoginForm({
               email, // user email address
               password, // user password -> min 8 characters by default
               name, // user display name
-              callbackURL, // A URL to redirect to after the user verifies their email (optional)
+              callbackURL: routes.signIn, // A URL to redirect to after the user verifies their email (optional)
             },
             {
               onError: (ctx) => {
@@ -70,7 +68,7 @@ export function LoginForm({
             {
               email, // user email address
               password, // user password -> min 8 characters by default
-              callbackURL, // A URL to redirect to after the user verifies their email (optional)
+              callbackURL: routes.dashboard, // A URL to redirect to after the user verifies their email (optional)
             },
             {
               onError: (ctx) => {
