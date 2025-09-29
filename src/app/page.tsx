@@ -1,7 +1,13 @@
+import Link from "next/link";
 import { routes } from "@/lib/routes";
+import { headers } from "next/headers";
 
 /* eslint-disable @next/next/no-img-element */
-export default function Home() {
+export default async function Home() {
+  const hdrs = await headers();
+  const host = hdrs.get("host") || "";
+  const isLocal = host === "http://lvh.me:3000" || host === "lvh.me:3000"
+  const signUpUrl = isLocal ? `http://app.${host}${routes.signUp}` : `https://app.${host}${routes.signUp}`;
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex flex-col items-center justify-center px-4">
       {/* Hero Section */}
@@ -12,12 +18,12 @@ export default function Home() {
         <p className="text-xl text-gray-700 mb-8">
           The platform built for photographers. Manage shoots, clients, and galleries with ease—designed to help you grow your creative business.
         </p>
-        <a
-          href={routes.signIn}
+        <Link
+          href={signUpUrl}
           className="inline-block px-8 py-3 bg-black text-white rounded-full font-semibold text-lg shadow-lg hover:bg-gray-800 transition"
         >
           Get Started
-        </a>
+        </Link>
       </section>
 
       {/* Features Section */}

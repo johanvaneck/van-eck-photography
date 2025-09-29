@@ -15,6 +15,7 @@ export const routes = {
   signIn: `/auth/sign-in`,
   signOut: `/auth/sign-out`,
   signUp: `/auth/sign-up`,
+  authSuccess: `/auth/success`,
   upgrade: `${appPrefix}/upgrade`,
   website(userName: string) {
     return `${appPrefix}/website/${userName}`;
