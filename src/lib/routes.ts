@@ -17,7 +17,4 @@ export const routes = {
   signUp: `/auth/sign-up`,
   authSuccess: `/auth/success`,
   upgrade: `${appPrefix}/upgrade`,
-  website(userName: string) {
-    return `${appPrefix}/website/${userName}`;
-  },
 };

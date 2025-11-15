@@ -21,7 +21,7 @@ export async function getEnquiries(userId: string) {
     };
 }
 
-export async function deleteEnquiry(id: string, userId: string): AsyncResult<boolean> {
+export async function deleteEnquiry(id: string): AsyncResult<boolean> {
     const { error } = await tryCatch(
         db.delete(enquiriesTable).where(eq(enquiriesTable.id, id))
     )

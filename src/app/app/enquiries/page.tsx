@@ -1,10 +1,10 @@
-import { getEnquiries, deleteEnquiry } from "../../actions/enquiries";
 import { ConfirmDeleteEnquiryButton } from "./confirm-delete-enquiry-button";
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { headers } from "next/dist/server/request/headers";
 import { auth } from "@/lib/auth";
-import { getCategories } from "../../actions/categories";
+import { getCategories } from "@/app/[tenant]/actions/categories";
+import { deleteEnquiry, getEnquiries } from "@/app/[tenant]/actions/enquiries";
 
 export default async function EnquiriesPage({ params }: { params: Promise<{ tenant: string }> }) {
     const { tenant: _ } = await params;
@@ -32,9 +32,7 @@ export default async function EnquiriesPage({ params }: { params: Promise<{ tena
                     <Badge variant="outline" className="ml-2">Admin</Badge>
                 </div>
             </div>
-            {errorEnquiries ? (
-                <div className="text-red-500 mb-4 px-8">Error loading enquiries: {errorEnquiries.message}</div>
-            ) : (!enquiries || enquiries.length === 0) ? (
+            {(!enquiries || enquiries.length === 0) ? (
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground w-full">
                     <svg width="48" height="48" fill="none" viewBox="0 0 24 24" className="mb-4 text-gray-300 dark:text-gray-700"><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="3" y="7" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M16 13h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 13h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 13h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     <span>No enquiries found.</span>
@@ -63,7 +61,7 @@ export default async function EnquiriesPage({ params }: { params: Promise<{ tena
                                     <TableCell className="text-right">
                                         <ConfirmDeleteEnquiryButton onConfirm={async () => {
                                             "use server";
-                                            await deleteEnquiry(enquiry.id, userId);
+                                            await deleteEnquiry(enquiry.id);
                                         }} />
                                     </TableCell>
                                 </TableRow>

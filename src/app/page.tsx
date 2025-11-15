@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { routes } from "@/lib/routes";
-import { headers } from "next/headers";
 
 /* eslint-disable @next/next/no-img-element */
 export default async function Home() {
-  const hdrs = await headers();
-  const host = hdrs.get("host") || "";
-  const isLocal = host === "http://lvh.me:3000" || host === "lvh.me:3000"
-  const signUpUrl = isLocal ? `http://app.${host}${routes.signUp}` : `https://app.${host}${routes.signUp}`;
+  const signUpUrl = routes.signUp
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex flex-col items-center justify-center px-4">
       {/* Hero Section */}

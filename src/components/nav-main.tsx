@@ -18,6 +18,7 @@ import {
 import { routes } from "@/lib/routes";
 import { User } from "better-auth";
 import { ChevronRight, SquareTerminal, NotebookIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 
 export function NavMain({
@@ -25,6 +26,10 @@ export function NavMain({
 }: {
   user: User
 }) {
+  const [website, setWebsite] = useState<string>();
+  useEffect(() => {
+    setWebsite(`/${user.name}`);
+  }, [user])
   const items = [
     {
       title: "Admin",
@@ -48,7 +53,7 @@ export function NavMain({
       items: [
         {
           title: "View Website",
-          url: routes.website(user.name),
+          url: website,
         },
         {
           title: "Categories",

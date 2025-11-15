@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { CategorySelect } from "../app/shoots/create/category-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { submitEnquiry } from "./actions/enquiry";
+import { CategorySelect } from "@/app/app/shoots/create/category-select";
 
 export function EnquiryForm({ submitEnquiryAction, userId, categories }: { submitEnquiryAction: typeof submitEnquiry, userId: string, categories: Array<{ id: string, name: string }> }) {
   const [status, setStatus] = useState<string | null>(null);
