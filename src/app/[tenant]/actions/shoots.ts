@@ -43,6 +43,7 @@ export async function createShoot({
 }
 
 export async function getShootsByMonth(
+  userId: string,
   start: Date,
   end: Date,
 ): Promise<Result<Shoot[]>> {
@@ -52,6 +53,7 @@ export async function getShootsByMonth(
       .from(shootsTable)
       .where(
         and(
+          eq(shootsTable.userId, userId),
           gte(shootsTable.time, format(start, "yyyy-MM-dd")),
           lt(shootsTable.time, format(addMonths(end, 1), "yyyy-MM-dd")),
         ),

@@ -10,19 +10,28 @@ import {
 } from "@/components/ui/table";
 import { DashboardTableBody } from "./dashboard/components/dashboard-table-body";
 import { updateShoot } from "@/app/[tenant]/actions/shoots";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { routes } from "@/lib/routes";
+import { redirect } from "next/navigation";
 
 export default async function Page({
   searchParams,
 }: {
   searchParams?: Promise<Record<string, string>>;
 }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    return redirect(routes.signIn)
+  }
+  const userId = session?.user?.id;
   const params = searchParams ? await searchParams : {};
   const now = new Date();
   const year = params.year ? parseInt(params.year) : now.getFullYear();
   const month = params.month ? parseInt(params.month) : now.getMonth();
   const start = startOfMonth(new Date(year, month, 1));
   const end = endOfMonth(start);
-  const { data: shoots, error } = await getShootsByMonth(start, end);
+  const { data: shoots, error } = await getShootsByMonth(userId, start, end);
   if (error) {
     return <div>Error loading shoots: {error.message}</div>;
   }
