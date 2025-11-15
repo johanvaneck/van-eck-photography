@@ -1,7 +1,9 @@
+// @ts-expect-error globals.css --- IGNORE ---
+import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { APP_URL } from "@/lib/globals";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,12 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "pici.sh",
+  title: "Pici",
   description: "The platform for photographers. Manage shoots, invoices, and your website—all in one place.",
+  metadataBase: new URL(APP_URL),
   openGraph: {
-    title: "pici.sh",
+    title: "Pici",
     description: "The platform for photographers. Manage shoots, invoices, and your website—all in one place.",
-    url: "https://pici.sh",
+    url: APP_URL,
     siteName: "pici.sh",
     images: [
       {
